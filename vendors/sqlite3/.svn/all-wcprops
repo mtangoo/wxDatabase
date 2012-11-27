@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/wxcode/!svn/ver/925/trunk/wxCode/components/databaselayer/sqlite3
+END
+sqlite3.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/wxcode/!svn/ver/925/trunk/wxCode/components/databaselayer/sqlite3/sqlite3.c
+END
+sqlite3.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/wxcode/!svn/ver/925/trunk/wxCode/components/databaselayer/sqlite3/sqlite3.h
+END
+sqlite3ext.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/wxcode/!svn/ver/925/trunk/wxCode/components/databaselayer/sqlite3/sqlite3ext.h
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/wxcode/!svn/ver/925/trunk/wxCode/components/databaselayer/sqlite3/README
+END

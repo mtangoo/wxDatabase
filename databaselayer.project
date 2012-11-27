@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="databaselayer" InternalType="Library">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0005Debug000000000000]]>
+    </Plugin>
+  </Plugins>
+  <Description/>
+  <Dependencies/>
+  <VirtualDirectory Name="src">
+    <VirtualDirectory Name="mysql">
+      <File Name="src/mysql/mysql_database.cpp"/>
+      <File Name="src/mysql/mysql_interface.cpp"/>
+      <File Name="src/mysql/mysql_param.cpp"/>
+      <File Name="src/mysql/mysql_preparedstatement.cpp"/>
+      <File Name="src/mysql/mysql_preparedstatement_parameter.cpp"/>
+      <File Name="src/mysql/mysql_preparedstatement_parametercollection.cpp"/>
+      <File Name="src/mysql/mysql_preparedStatement_resultSet.cpp"/>
+      <File Name="src/mysql/mysql_preparedstatement_wrapper.cpp"/>
+      <File Name="src/mysql/mysql_resultset_metadata.cpp"/>
+    </VirtualDirectory>
+    <File Name="src/database.cpp"/>
+    <File Name="src/error_reporter.cpp"/>
+    <File Name="src/PreparedStatement.cpp"/>
+    <File Name="src/query_paser.cpp"/>
+    <File Name="src/resultset.cpp"/>
+    <File Name="src/strconverter.cpp"/>
+    <VirtualDirectory Name="postgresql">
+      <File Name="src/postgresql/postgresql_database.cpp"/>
+      <File Name="src/postgresql/postgresql_interface.cpp"/>
+      <File Name="src/postgresql/postgresql_param.cpp"/>
+      <File Name="src/postgresql/postgresql_preparedstatement.cpp"/>
+      <File Name="src/postgresql/postgresql_preparedstatement_parameter_collector.cpp"/>
+      <File Name="src/postgresql/postgresql_preparedstatement_wrapper.cpp"/>
+      <File Name="src/postgresql/postgresql_resultset.cpp"/>
+      <File Name="src/postgresql/postgresql_resultset_metadata.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Sqlite">
+      <File Name="src/sqlite3/sqlite_database.cpp"/>
+      <File Name="src/sqlite3/sqlite_preparedstatement.cpp"/>
+      <File Name="src/sqlite3/sqlite_resultset.cpp"/>
+      <File Name="src/sqlite3/sqlite_resultset_metatdata.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="ODBC">
+      <File Name="src/odbc/odbc_database.cpp"/>
+      <File Name="src/odbc/odbc_inteface.cpp"/>
+      <File Name="src/odbc/odbc_param.cpp"/>
+      <File Name="src/odbc/odbc_preparedstatement.cpp"/>
+      <File Name="src/odbc/odbc_resultset.cpp"/>
+      <File Name="src/odbc/odbc_resultset_metadata.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+    <VirtualDirectory Name="mysql">
+      <File Name="include/mysql/mysql_database.h"/>
+      <File Name="include/mysql/mysql_interface.h"/>
+      <File Name="include/mysql/mysql_param.h"/>
+      <File Name="include/mysql/mysql_preparedstatement.h"/>
+      <File Name="include/mysql/mysql_preparedstatement_parameter.h"/>
+      <File Name="include/mysql/mysql_preparedstatement_parametercollection.h"/>
+      <File Name="include/mysql/mysql_preparedStatement_resultSet.h"/>
+      <File Name="include/mysql/mysql_preparedstatement_wrapper.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="postgresql">
+      <File Name="include/postgresql/postgresql_database.h"/>
+      <File Name="include/postgresql/postgresql_interface.h"/>
+      <File Name="include/postgresql/postgresql_param.h"/>
+      <File Name="include/postgresql/postgresql_preparedstatement.h"/>
+      <File Name="include/postgresql/postgresql_preparedstatement_parameter_collector.h"/>
+      <File Name="include/postgresql/postgresql_preparedstatement_wrapper.h"/>
+      <File Name="include/postgresql/postgresql_resultset.h"/>
+      <File Name="include/postgresql/postgresql_resultset_metadata.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Sqlite">
+      <File Name="include/sqlite3/sqlite_database.h"/>
+      <File Name="include/sqlite3/sqlite_preparedstatement.h"/>
+      <File Name="include/sqlite3/sqlite_resultset.h"/>
+      <File Name="include/sqlite3/sqlite_resultset_metatdat.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="ODBC">
+      <File Name="include/odbc/odbc_database.h"/>
+      <File Name="include/odbc/odbc_inteface.h"/>
+      <File Name="include/odbc/odbc_param.h"/>
+      <File Name="include/odbc/odbc_preparedstatement.h"/>
+      <File Name="include/odbc/odbc_resultset.h"/>
+      <File Name="include/odbc/odbc_resultset_metadata.h"/>
+    </VirtualDirectory>
+    <File Name="include/database.h"/>
+    <File Name="include/defs.h"/>
+    <File Name="include/error_reporter.h"/>
+    <File Name="include/errorcodes.h"/>
+    <File Name="include/exceptions.h"/>
+    <File Name="include/mysql/mysql_resultset_metadata.h"/>
+    <File Name="include/prepared_statement.h"/>
+    <File Name="include/query_parser.h"/>
+    <File Name="include/resultset.h"/>
+    <File Name="include/resultset_metadata.h"/>
+    <File Name="include/strconverter.h"/>
+  </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Settings Type="Static Library">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-Wall;-O0;$(shell $(WX_TOOL) --cxxflags --unicode=yes --debug=yes )" C_Options="-g;-Wall;-O0;$(shell $(WX_TOOL) --cflags --unicode=yes --debug=yes )" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+        <IncludePath Value="."/>
+        <IncludePath Value="vendors/mysql/include"/>
+        <IncludePath Value="vendors/postgresql/include"/>
+      </Compiler>
+      <Linker Options="$(shell $(WX_TOOL) --libs --unicode=yes --debug=yes );-rdynamic;" Required="yes">
+        <Library Value="vendors/mysql/lib/libmysqlclient.a"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../../libsoutput/lib$(ProjectName).a" IntermediateDirectory="../../working/$(ProjectName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[
+      
+      
+      
+      
+      
+      
+      ]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);" C_Options="-O2;-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="-s;$(shell wx-config --libs --debug=no --unicode=yes)" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Release" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      ]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>
