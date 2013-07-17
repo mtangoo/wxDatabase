@@ -536,7 +536,8 @@ bool wxOdbcResultSet::IsBlob(int nField)
 
   SQLRETURN nRet = m_pInterface->GetSQLDescribeCol()( m_pOdbcStatement, nField, col_name, 
       8192, &col_name_length, &col_data_type, &col_size, &col_decimal_digits, &col_nullable );
-
+  //not used so mark it so
+ 
   return (col_data_type == SQL_BIT || col_data_type == SQL_BINARY || 
     col_data_type == SQL_VARBINARY || col_data_type == SQL_LONGVARBINARY);
 }

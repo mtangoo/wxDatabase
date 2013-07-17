@@ -597,7 +597,7 @@ wxArrayString wxOdbcDatabase::GetPKColumns(const wxString& table)
   SQLHSTMT pStatement = allocStmth();
   wxCharBuffer tableBuffer = ConvertToUnicodeStream(table);
   int tableBufferLength = GetEncodedStreamLength(table);
-  SQLRETURN nRet = m_pInterface->SQLPrimaryKeys()(pStatement,
+  SQLRETURN nRet = m_pInterface->GetSQLPKColumns()(pStatement,
       NULL, 0,
       NULL, 0,
       (SQLTCHAR*)(const char*)tableBuffer, tableBufferLength,

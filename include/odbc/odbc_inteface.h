@@ -75,6 +75,7 @@ public:
   SQLFetchType GetSQLFetch() { return m_pSQLFetch; }
   SQLGetDataType GetSQLGetData() { return m_pSQLGetData; }
   SQLColumnsType GetSQLColumns() { return m_pSQLColumns; }
+  SQLColumnsType GetSQLPKColumns() { return m_pSQLColumns; } 
   SQLGetDiagRecType GetSQLGetDiagRec() { return m_pSQLGetDiagRec; }
   SQLNumParamsType GetSQLNumParams() { return m_pSQLNumParams; }
   SQLExecuteType GetSQLExecute() { return m_pSQLExecute; }

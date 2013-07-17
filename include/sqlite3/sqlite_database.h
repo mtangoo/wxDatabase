@@ -60,7 +60,7 @@ public:
   virtual wxArrayString GetTables();
   virtual wxArrayString GetViews();
   virtual wxArrayString GetColumns(const wxString& table);
-  virtual wxArrayString GetPKColumns(const wxString& table)
+  virtual wxArrayString GetPKColumns(const wxString& table);
 
   static int TranslateErrorCode(int nCode);
 

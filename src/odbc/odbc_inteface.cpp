@@ -161,6 +161,16 @@ bool wxOdbcInterface::Init()
     return false;
   }
 
+  symbol = wxT("SQLPrimaryKeys");
+  if (m_OdbcDLL.HasSymbol(symbol))
+  {
+    m_pSQLColumns = (SQLColumnsType)m_OdbcDLL.GetSymbol(symbol);
+  }
+  else
+  {
+    return false;
+  }
+
   symbol = wxT("SQLGetDiagRec");
   if (m_OdbcDLL.HasSymbol(symbol))
   {
