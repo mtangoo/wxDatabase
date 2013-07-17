@@ -21,10 +21,10 @@ wxPostgresDatabase::wxPostgresDatabase()
   }
 #endif
   m_strServer = _("localhost");
-  m_strUser = _("");
-  m_strPassword = _("");
-  m_strDatabase = _("");
-  m_strPort = _("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
+  m_strDatabase = wxT("");
+  m_strPort = wxT("");
 }
 
 wxPostgresDatabase::wxPostgresDatabase(const wxString& strDatabase)
@@ -41,9 +41,9 @@ wxPostgresDatabase::wxPostgresDatabase(const wxString& strDatabase)
   }
 #endif
   m_strServer = _("localhost");
-  m_strUser = _("");
-  m_strPassword = _("");
-  m_strPort = _("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
+  m_strPort = wxT("");
 
   Open(strDatabase);
 }
@@ -62,9 +62,9 @@ wxPostgresDatabase::wxPostgresDatabase(const wxString& strServer, const wxString
   }
 #endif
   m_strServer = strServer;
-  m_strUser = _("");
-  m_strPassword = _("");
-  m_strPort = _("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
+  m_strPort = wxT("");
 
   Open(strDatabase);
 }
@@ -85,7 +85,7 @@ wxPostgresDatabase::wxPostgresDatabase(const wxString& strDatabase, const wxStri
   m_strServer = _("localhost");
   m_strUser = strUser;
   m_strPassword = strPassword;
-  m_strPort = _("");
+  m_strPort = wxT("");
 
   Open(strDatabase);
 }
@@ -106,7 +106,7 @@ wxPostgresDatabase::wxPostgresDatabase(const wxString& strServer, const wxString
   m_strServer = strServer;
   m_strUser = strUser;
   m_strPassword = strPassword;
-  m_strPort = _("");
+  m_strPort = wxT("");
 
   Open(strDatabase);
 }
@@ -157,25 +157,25 @@ bool wxPostgresDatabase::Open()
   wxCharBuffer portCharBuffer;
   const char* pPort = NULL;
   
-  if (m_strServer != _("localhost") && m_strServer != _(""))
+  if (m_strServer != _("localhost") && m_strServer != wxT(""))
   {
     serverCharBuffer = ConvertToUnicodeStream(m_strServer);
     pHost = serverCharBuffer;
   }
   
-  if (m_strUser != _(""))
+  if (m_strUser != wxT(""))
   {
     userCharBuffer = ConvertToUnicodeStream(m_strUser);
     pUser = userCharBuffer;
   }
 
-  if (m_strPassword != _(""))
+  if (m_strPassword != wxT(""))
   {
     passwordCharBuffer = ConvertToUnicodeStream(m_strPassword);
     pPassword = passwordCharBuffer;
   }
 
-  if (m_strPort != _(""))
+  if (m_strPort != wxT(""))
   {
     portCharBuffer = ConvertToUnicodeStream(m_strPort);
     pPort = portCharBuffer;
@@ -206,10 +206,10 @@ bool wxPostgresDatabase::Open(const wxString& strDatabase)
 bool wxPostgresDatabase::Open(const wxString& strServer, const wxString& strDatabase)
 {
   m_strServer = strServer;
-  m_strUser = _("");
-  m_strPassword = _("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
   m_strDatabase = strDatabase;
-  m_strPort = _("");
+  m_strPort = wxT("");
   return Open();
 }
 
@@ -219,7 +219,7 @@ bool wxPostgresDatabase::Open(const wxString& strDatabase, const wxString& strUs
   m_strUser = strUser;
   m_strPassword = strPassword;
   m_strDatabase = strDatabase;
-  m_strPort = _("");
+  m_strPort = wxT("");
   return Open();
 }
 
@@ -229,7 +229,7 @@ bool wxPostgresDatabase::Open(const wxString& strServer, const wxString& strData
   m_strUser = strUser;
   m_strPassword = strPassword;
   m_strDatabase = strDatabase;
-  m_strPort = _("");
+  m_strPort = wxT("");
   return Open();
 }
 
@@ -618,6 +618,71 @@ wxArrayString wxPostgresDatabase::GetColumns(const wxString& table)
 
   return returnArray;
 }
+
+
+wxArrayString wxPostgresDatabase::GetPKColumns(const wxString& table)
+{
+  // Initialize variables
+  wxArrayString returnArray;
+
+  // Keep these variables outside of scope so that we can clean them up
+  //  in case of an error
+  wxPreparedStatement* pStatement = NULL;
+  wxDatabaseResultSet* pResult = NULL;
+
+#ifndef DONT_USE_DATABASE_LAYER_EXCEPTIONS
+  try
+  {
+#endif
+    wxString query = _("SELECT pg_attribute.attname,format_type(pg_attribute.atttypid, pg_attribute.atttypmod) FROM pg_index, pg_class, pg_attribute WHERE   pg_class.oid = ? ::regclass AND   indrelid = pg_class.oid AND   pg_attribute.attrelid = pg_class.oid AND pg_attribute.attnum = any(pg_index.indkey) AND indisprimary;");
+    pStatement = PrepareStatement(query);
+    if (pStatement)
+    {
+      pStatement->SetParamString(1, table);
+      pResult = pStatement->ExecuteQuery();
+      if (pResult)
+      {
+        while (pResult->Next())
+        {
+          returnArray.Add(pResult->GetResultString(wxT("attname")));
+        }
+      }
+    }
+#ifndef DONT_USE_DATABASE_LAYER_EXCEPTIONS
+  }
+  catch (wxDatabaseException& e)
+  {
+    if (pResult != NULL)
+    {
+      CloseResultSet(pResult);
+      pResult = NULL;
+    }
+
+    if (pStatement != NULL)
+    {
+      CloseStatement(pStatement);
+      pStatement = NULL;
+    }
+
+    throw e;
+  }
+#endif
+
+  if (pResult != NULL)
+  {
+    CloseResultSet(pResult);
+    pResult = NULL;
+  }
+
+  if (pStatement != NULL)
+  {
+    CloseStatement(pStatement);
+    pStatement = NULL;
+  }
+
+  return returnArray;
+}
+
 
 int wxPostgresDatabase::TranslateErrorCode(int nCode)
 {

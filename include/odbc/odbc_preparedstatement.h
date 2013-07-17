@@ -15,8 +15,8 @@
 #include "wx/dynarray.h"
 
 #include "../prepared_statement.h" 
-#include "include/odbc/odbc_inteface.h"
-#include "include/odbc/odbc_param.h"
+#include "odbc_inteface.h"
+#include "odbc_param.h"
 
 #include <sql.h>
 

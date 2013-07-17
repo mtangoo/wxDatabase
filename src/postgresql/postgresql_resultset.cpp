@@ -72,7 +72,7 @@ int wxPostgresResultSet::GetResultInt(int nField)
 
 wxString wxPostgresResultSet::GetResultString(int nField)
 {
-  wxString strValue = _("");
+  wxString strValue = wxT("");
   if (m_bBinaryResults)
   {
     wxLogError(_("Not implemented\n"));

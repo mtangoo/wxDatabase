@@ -24,9 +24,9 @@ wxMysqlDatabase::wxMysqlDatabase() : wxDatabase()
   InitDatabase();
   m_strServer = _("localhost");
   m_iPort = 3306; // default
-  m_strDatabase = _("");
-  m_strUser = _("");
-  m_strPassword = _("");
+  m_strDatabase = wxT("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
 }
 
 wxMysqlDatabase::wxMysqlDatabase(const wxString& strDatabase)
@@ -45,8 +45,8 @@ wxMysqlDatabase::wxMysqlDatabase(const wxString& strDatabase)
   InitDatabase();
   m_strServer = _("localhost");
   m_iPort = 3306; // default
-  m_strUser = _("");
-  m_strPassword = _("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
   Open(strDatabase);
 }
 
@@ -65,8 +65,8 @@ wxMysqlDatabase::wxMysqlDatabase(const wxString& strServer, const wxString& strD
 #endif
   InitDatabase();
   ParseServerAndPort(strServer);
-  m_strUser = _("");
-  m_strPassword = _("");
+  m_strUser = wxT("");
+  m_strPassword = wxT("");
   Open(strDatabase);
 }
 
@@ -715,6 +715,49 @@ wxArrayString wxMysqlDatabase::GetColumns(const wxString& table)
     while (pResult->Next())
     {
       returnArray.Add(pResult->GetResultString(1).Trim());
+    }
+#ifndef DONT_USE_DATABASE_LAYER_EXCEPTIONS
+  }
+  catch (wxDatabaseException& e)
+  {
+    if (pResult != NULL)
+    {
+      CloseResultSet(pResult);
+      pResult = NULL;
+    }
+
+    throw e;
+  }
+#endif
+
+  if (pResult != NULL)
+  {
+    CloseResultSet(pResult);
+    pResult = NULL;
+  }
+
+ 
+  return returnArray;
+}
+
+
+
+wxArrayString wxMysqlDatabase::GetPKColumns(const wxString& table)
+{
+  wxArrayString returnArray;
+  // Keep these variables outside of scope so that we can clean them up
+  //  in case of an error
+  wxDatabaseResultSet* pResult = NULL;
+#ifndef DONT_USE_DATABASE_LAYER_EXCEPTIONS
+  try
+  {
+#endif
+    wxString query = wxString::Format(_("SHOW KEYS FROM  %s WHERE Key_name = 'PRIMARY';"), table.c_str());
+    pResult = ExecuteQuery(query);
+
+    while (pResult->Next())
+    {
+      returnArray.Add(pResult->GetResultString(wxT("Column_name")).Trim());
     }
 #ifndef DONT_USE_DATABASE_LAYER_EXCEPTIONS
   }

@@ -27,7 +27,7 @@ void wxDatabase::CloseResultSets()
   wxDatabaseResultSetHashSet::iterator stop = m_ResultSets.end();
   while (start != stop)
   {
-    wxLogDebug(_("ResultSet NOT closed and cleaned up by the DatabaseLayer dtor"));
+    wxLogDebug(_("ResultSet NOT closed and cleaned up by the wxDatabase dtor: Cleaning!"));
     delete (*start);
     start++;
   }

@@ -130,7 +130,7 @@ int wxMysqlPreparedStatementResultSet::GetResultInt(int nField)
 
 wxString wxMysqlPreparedStatementResultSet::GetResultString(int nField)
 {
-  wxString strValue = _("");
+  wxString strValue = wxT("");
   MYSQL_BIND* pResultBinding = GetResultBinding(nField);
   if (pResultBinding != NULL)
   {

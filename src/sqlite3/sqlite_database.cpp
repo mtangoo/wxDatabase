@@ -138,7 +138,7 @@ int wxSqliteDatabase::RunQuery(const wxString& strQuery, bool bParseQuery)
   while (start != stop)
   {
     char* szErrorMessage = NULL;
-    wxString strErrorMessage = _("");
+    wxString strErrorMessage = wxT("");
     wxCharBuffer sqlBuffer = ConvertToUnicodeStream(*start);
     int nReturn = sqlite3_exec((sqlite3*)m_pDatabase, sqlBuffer, 0, 0, &szErrorMessage);
   
@@ -172,7 +172,7 @@ wxDatabaseResultSet* wxSqliteDatabase::RunQueryWithResults(const wxString& strQu
     for (unsigned int i=0; i<(QueryArray.size()-1); i++)
     {
       char* szErrorMessage = NULL;
-      wxString strErrorMessage = _("");
+      wxString strErrorMessage = wxT("");
       wxCharBuffer sqlBuffer = ConvertToUnicodeStream(QueryArray[i]);
       int nReturn = sqlite3_exec((sqlite3*)m_pDatabase, sqlBuffer, 0, 0, &szErrorMessage);
   
@@ -547,6 +547,67 @@ wxArrayString wxSqliteDatabase::GetColumns(const wxString& table)
 
   return returnArray;
 }
+
+
+wxArrayString wxSqliteDatabase::GetPKColumns(const wxString& table)
+{
+    wxArrayString returnArray;
+
+  // Keep these variables outside of scope so that we can clean them up
+  //  in case of an error
+  wxDatabaseResultSet* pResult = NULL;
+  wxResultSetMetaData* pMetaData = NULL;
+
+#ifndef DONT_USE_DATABASE_LAYER_EXCEPTIONS
+  try
+  {
+#endif
+    wxCharBuffer tableNameBuffer = ConvertToUnicodeStream(table);
+    wxString query = wxString::Format(_("PRAGMA table_info('%s') ;"), table.c_str());
+    pResult = ExecuteQuery(query);
+    while(pResult->Next()) 
+	{
+		if(pResult->GetResultInt(wxT("pk"))==1)//its primary key
+		{
+			returnArray.Add(pResult->GetResultString(wxT("pk")));
+		}
+	} 
+
+#ifndef DONT_USE_DATABASE_LAYER_EXCEPTIONS
+  }
+  catch (wxDatabaseException& e)
+  {
+    if (pMetaData != NULL)
+    {
+      pResult->CloseMetaData(pMetaData);
+      pMetaData = NULL;
+    }
+
+    if (pResult != NULL)
+    {
+      CloseResultSet(pResult);
+      pResult = NULL;
+    }
+
+    throw e;
+  }
+#endif
+
+  if (pMetaData != NULL)
+  {
+    pResult->CloseMetaData(pMetaData);
+    pMetaData = NULL;
+  }
+
+  if (pResult != NULL)
+  {
+    CloseResultSet(pResult);
+    pResult = NULL;
+  }
+
+  return returnArray;
+}
+
 
 int wxSqliteDatabase::TranslateErrorCode(int nCode)
 {

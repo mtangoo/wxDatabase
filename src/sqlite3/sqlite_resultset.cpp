@@ -93,7 +93,7 @@ int wxSqliteResultSet::GetResultInt(int nField)
 
 wxString wxSqliteResultSet::GetResultString(int nField)
 {
-  wxString strValue = _("");
+  wxString strValue = wxT("");
   if (m_pSqliteStatement == NULL)
     m_pSqliteStatement = m_pStatement->GetLastStatement();
   strValue = ConvertFromUnicodeStream((const char*)(sqlite3_column_text(m_pSqliteStatement, nField-1)));

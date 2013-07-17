@@ -83,6 +83,8 @@ public:
   virtual wxArrayString GetViews() = 0;
   /// Retrieve all column names for a table
   virtual wxArrayString GetColumns(const wxString& table) = 0;
+  ///get Primary keys column names
+  virtual wxArrayString GetPKColumns(const wxString& table) = 0;
 
   // Database single result retrieval API contributed by Guru Kathiresan
   /// With the GetSingleResultX API, two additional exception types are thrown:

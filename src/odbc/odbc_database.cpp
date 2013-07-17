@@ -589,13 +589,66 @@ wxArrayString wxOdbcDatabase::GetColumns(const wxString& table)
   return returnArray;
 }
 
+
+wxArrayString wxOdbcDatabase::GetPKColumns(const wxString& table)
+{
+  wxArrayString returnArray;
+  // Use SQLColumns
+  SQLHSTMT pStatement = allocStmth();
+  wxCharBuffer tableBuffer = ConvertToUnicodeStream(table);
+  int tableBufferLength = GetEncodedStreamLength(table);
+  SQLRETURN nRet = m_pInterface->SQLPrimaryKeys()(pStatement,
+      NULL, 0,
+      NULL, 0,
+      (SQLTCHAR*)(const char*)tableBuffer, tableBufferLength,
+      NULL, 0);
+
+  if (nRet != SQL_SUCCESS)
+  {
+    InterpretErrorCodes( nRet );
+    m_pInterface->GetSQLFreeStmt()(pStatement, SQL_CLOSE);
+    ThrowDatabaseException();
+    return returnArray;
+  }
+
+  nRet = m_pInterface->GetSQLFetch()(pStatement);
+  while (nRet == SQL_SUCCESS || nRet == SQL_SUCCESS_WITH_INFO)
+  {
+    SQLPOINTER buff[8192];
+
+    memset(buff, 0, 8192*sizeof(SQLTCHAR));
+
+    SQLINTEGER  col_size         = 8192;
+    SQLINTEGER  real_size        = 0;
+    int nField = 4;
+
+    SQLRETURN nGetDataReturn = m_pInterface->GetSQLGetData()( pStatement, nField, SQL_C_CHAR, buff,
+      col_size, &real_size );
+    if ( nGetDataReturn != SQL_SUCCESS && nGetDataReturn != SQL_SUCCESS_WITH_INFO )
+    {
+      InterpretErrorCodes(nRet);
+      m_pInterface->GetSQLFreeStmt()(pStatement, SQL_CLOSE);
+      ThrowDatabaseException();
+      return returnArray;
+    }
+    wxString strColumn = ConvertFromUnicodeStream((const char*)buff);
+    returnArray.Add(strColumn);
+    nRet = m_pInterface->GetSQLFetch()(pStatement);
+  }
+
+  m_pInterface->GetSQLFreeStmt()(pStatement, SQL_CLOSE);
+
+  return returnArray;
+}
+
+
 //void OdbcDatabaseLayer::InterpretErrorCodes( long nCode, SQLHSTMT stmth_ptr )
 void wxOdbcDatabase::InterpretErrorCodes( long nCode, void* stmth_ptr )
 {
   wxLogDebug(_("OdbcDatabaseLayer::InterpretErrorCodes()\n"));
 
   //if ((nCode != SQL_SUCCESS) ) // && (nCode != SQL_SUCCESS_WITH_INFO))
-  {
+  //{
     SQLINTEGER iNativeCode;
     SQLTCHAR strState[ERR_STATE_LEN];
     SQLTCHAR strBuffer[ERR_BUFFER_LEN];
@@ -614,7 +667,7 @@ void wxOdbcDatabase::InterpretErrorCodes( long nCode, void* stmth_ptr )
     SetErrorCode((int)iNativeCode);
     //SetErrorMessage(ConvertFromUnicodeStream((char*)strBuffer));
     SetErrorMessage(wxString((wxChar*)strBuffer));
-  }
+  //}
 }
 
 bool wxOdbcDatabase::IsAvailable()

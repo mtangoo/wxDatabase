@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="databaselayer" InternalType="Library">
+<CodeLite_Project Name="wxDatabase" InternalType="Library">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00010001N0005Debug000000000000]]>
+      <![CDATA[00030001N00000000000000000001N0005Debug0000000000000001N0010DebugWin32000000000000]]>
     </Plugin>
   </Plugins>
   <Description/>
@@ -97,7 +97,6 @@
     <File Name="include/resultset_metadata.h"/>
     <File Name="include/strconverter.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
   <Settings Type="Static Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -113,6 +112,7 @@
         <IncludePath Value="."/>
         <IncludePath Value="vendors/mysql/include"/>
         <IncludePath Value="vendors/postgresql/include"/>
+        <IncludePath Value="../../lib/sqlite3/include"/>
       </Compiler>
       <Linker Options="$(shell $(WX_TOOL) --libs --unicode=yes --debug=yes );-rdynamic;" Required="yes">
         <Library Value="vendors/mysql/lib/libmysqlclient.a"/>
@@ -120,14 +120,50 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="../../libsoutput/lib$(ProjectName).a" IntermediateDirectory="../../working/$(ProjectName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[
-      
-      
-      
-      
-      
-      
-      ]]>
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="DebugWin32" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+        <IncludePath Value="."/>
+        <IncludePath Value="vendors/mysql/include"/>
+        <IncludePath Value="vendors/postgresql/include"/>
+        <IncludePath Value="../../lib/sqlite3/include"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --libs --unicode=yes --debug=yes );-rdynamic;" Required="yes">
+        <LibraryPath Value="vendors/mysql/lib/"/>
+        <Library Value="libmysqlclient.a"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../../libsoutput/lib$(ProjectName).a" IntermediateDirectory="../../working/$(ProjectName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -178,6 +214,8 @@
       
       
       
+      
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -208,4 +246,7 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugWin32"/>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Debug"/>
 </CodeLite_Project>

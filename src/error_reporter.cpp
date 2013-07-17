@@ -33,7 +33,7 @@ void wxDatabaseErrorReporter::SetErrorCode(int nErrorCode)
 
 void wxDatabaseErrorReporter::ResetErrorCodes()
 {
-  m_strErrorMessage = _("");
+  m_strErrorMessage = wxT("");
   m_nErrorCode = wxDATABASE_OK;
 }
 

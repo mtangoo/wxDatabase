@@ -12,7 +12,7 @@
     #include "wx/wx.h"
 #endif
 
-#include "include/odbc/odbc_inteface.h"
+#include "odbc_inteface.h"
 #include "../resultset_metadata.h" 
 
 #include <sql.h>
