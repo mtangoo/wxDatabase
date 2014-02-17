@@ -1,0 +1,327 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\common">
+      <UniqueIdentifier>{7d990e4d-ef26-43f5-b96f-50d21164a51d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\build">
+      <UniqueIdentifier>{95b5be1c-15c6-4fab-ab13-6f92a5d17fd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mysql">
+      <UniqueIdentifier>{ddfe4e53-5bf2-4e60-a0e8-f6d937b5c3d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\odbc">
+      <UniqueIdentifier>{ad060f6d-7d06-419f-b92c-b710044ab0c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tds">
+      <UniqueIdentifier>{482d7ce7-f653-4228-8eca-42bc66333c2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\postgresql">
+      <UniqueIdentifier>{f647f02d-02b7-47d0-9e66-ef4cf4966110}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sqlite">
+      <UniqueIdentifier>{c8b61269-5764-4bfe-ae20-0c607da30fff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\sqlite">
+      <UniqueIdentifier>{67706847-eb1a-4264-8cb9-59f4aa5395da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\build">
+      <UniqueIdentifier>{30673080-9518-4b24-83db-ad19f0d71739}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\setup">
+      <UniqueIdentifier>{ba29178c-3275-4a55-b940-7bf07452cd6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\common">
+      <UniqueIdentifier>{5e67fe60-bda0-4eb8-a0b8-d5786ce10937}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mysql">
+      <UniqueIdentifier>{a3633047-16a3-4109-af43-3ab4b42360a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\postgresql">
+      <UniqueIdentifier>{81e15739-88af-4078-b622-c4a3b55bc6db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tds">
+      <UniqueIdentifier>{8422170a-e2ec-4720-a8ea-067a8149c2d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\odbc">
+      <UniqueIdentifier>{d2c3899e-974a-4509-a00b-ce73ecb431d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
+    </Filter>
+    <Filter Include="Doxygen Files">
+      <UniqueIdentifier>{7ae7cfe3-1c2e-43fe-a7bd-c2451841cf8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Doxygen Files\Overviews">
+      <UniqueIdentifier>{c1874f10-2b85-49fc-ac2b-03c937ad1315}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Doxygen Files\Main Pages">
+      <UniqueIdentifier>{110b8c74-c75b-476f-8e18-2be939b4cb4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Doxygen Files\Groups">
+      <UniqueIdentifier>{9eddb599-249f-4657-bdce-fcee24ed5a6c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\database\database.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\error_reporter.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\prepared_statement.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\query_parser.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\resultset.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\string_converter.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\wxprec.cpp">
+      <Filter>Source Files\build</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\mysql\mysql_database.cpp">
+      <Filter>Source Files\mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\mysql\mysql_interface.cpp">
+      <Filter>Source Files\mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\mysql\mysql_param.cpp">
+      <Filter>Source Files\mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\mysql\mysql_preparedstatement.cpp">
+      <Filter>Source Files\mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\mysql\mysql_preparedstatement_parameter.cpp">
+      <Filter>Source Files\mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\mysql\mysql_preparedstatement_parameter_collection.cpp">
+      <Filter>Source Files\mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\mysql\mysql_preparedStatement_resultset.cpp">
+      <Filter>Source Files\mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\mysql\mysql_preparedstatement_wrapper.cpp">
+      <Filter>Source Files\mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\mysql\mysql_resultset_metadata.cpp">
+      <Filter>Source Files\mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\odbc\odbc_database.cpp">
+      <Filter>Source Files\odbc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\odbc\odbc_inteface.cpp">
+      <Filter>Source Files\odbc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\odbc\odbc_param.cpp">
+      <Filter>Source Files\odbc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\odbc\odbc_preparedstatement.cpp">
+      <Filter>Source Files\odbc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\odbc\odbc_resultset.cpp">
+      <Filter>Source Files\odbc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\odbc\odbc_resultset_metadata.cpp">
+      <Filter>Source Files\odbc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\tds\tds_columndata.cpp">
+      <Filter>Source Files\tds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\tds\tds_database.cpp">
+      <Filter>Source Files\tds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\tds\tds_preparedstatement.cpp">
+      <Filter>Source Files\tds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\tds\tds_resultset.cpp">
+      <Filter>Source Files\tds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\tds\tds_resultset_metadata.cpp">
+      <Filter>Source Files\tds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\postgresql\postgresql_database.cpp">
+      <Filter>Source Files\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\postgresql\postgresql_interface.cpp">
+      <Filter>Source Files\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\postgresql\postgresql_param.cpp">
+      <Filter>Source Files\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\postgresql\postgresql_preparedstatement.cpp">
+      <Filter>Source Files\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\postgresql\postgresql_preparedstatement_parameter_collection.cpp">
+      <Filter>Source Files\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\postgresql\postgresql_preparedstatement_wrapper.cpp">
+      <Filter>Source Files\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\postgresql\postgresql_resultset.cpp">
+      <Filter>Source Files\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\postgresql\postgresql_resultset_metadata.cpp">
+      <Filter>Source Files\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\sqlite3\sqlite_database.cpp">
+      <Filter>Source Files\sqlite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\sqlite3\sqlite_preparedstatement.cpp">
+      <Filter>Source Files\sqlite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\sqlite3\sqlite_resultset.cpp">
+      <Filter>Source Files\sqlite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database\sqlite3\sqlite_resultset_metatdata.cpp">
+      <Filter>Source Files\sqlite</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\wx\database\sqlite3\sqlite_database.h">
+      <Filter>Header Files\sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\sqlite3\sqlite_preparedstatement.h">
+      <Filter>Header Files\sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\sqlite3\sqlite_resultset.h">
+      <Filter>Header Files\sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\sqlite3\sqlite_resultset_metatdata.h">
+      <Filter>Header Files\sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\dlimpexp.h">
+      <Filter>Header Files\build</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\wxprec.h">
+      <Filter>Header Files\build</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\setup.h">
+      <Filter>Header Files\setup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\database.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\error_reporter.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\errorcodes.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\exception.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\prepared_statement.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\query_parser.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\resultset.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\resultset_metadata.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\string_converter.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\mysql\mysql_database.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\mysql\mysql_interface.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\mysql\mysql_param.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\mysql\mysql_preparedstatement.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\mysql\mysql_preparedstatement_parameter.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\mysql\mysql_preparedstatement_parameter_collection.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\mysql\mysql_preparedStatement_resultset.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\mysql\mysql_preparedstatement_wrapper.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\mysql\mysql_resultset_metadata.h">
+      <Filter>Header Files\mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\postgresql\postgresql_database.h">
+      <Filter>Header Files\postgresql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\postgresql\postgresql_interface.h">
+      <Filter>Header Files\postgresql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\postgresql\postgresql_param.h">
+      <Filter>Header Files\postgresql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\postgresql\postgresql_preparedstatement.h">
+      <Filter>Header Files\postgresql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\postgresql\postgresql_preparedstatement_parameter_collection.h">
+      <Filter>Header Files\postgresql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\postgresql\postgresql_preparedstatement_wrapper.h">
+      <Filter>Header Files\postgresql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\postgresql\postgresql_resultset.h">
+      <Filter>Header Files\postgresql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\postgresql\postgresql_resultset_metadata.h">
+      <Filter>Header Files\postgresql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\tds\tds_columndata.h">
+      <Filter>Header Files\tds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\tds\tds_database.h">
+      <Filter>Header Files\tds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\tds\tds_preparedstatement.h">
+      <Filter>Header Files\tds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\tds\tds_resultset.h">
+      <Filter>Header Files\tds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\tds\tds_resultset_metadata.h">
+      <Filter>Header Files\tds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\odbc\odbc_database.h">
+      <Filter>Header Files\odbc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\odbc\odbc_inteface.h">
+      <Filter>Header Files\odbc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\odbc\odbc_param.h">
+      <Filter>Header Files\odbc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\odbc\odbc_preparedstatement.h">
+      <Filter>Header Files\odbc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\odbc\odbc_resultset.h">
+      <Filter>Header Files\odbc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\wx\database\odbc\odbc_resultset_metadata.h">
+      <Filter>Header Files\odbc</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
