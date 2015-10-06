@@ -1063,7 +1063,7 @@ wxDatabase* wxDatabase::GetPostgresDatabase(wxConfigBase& config, wxString* err)
 }
 #endif
 
-#if wxUSE_DATABASE_MYSQL
+ #if wxUSE_DATABASE_MYSQL
 wxDatabase* wxDatabase::GetMysqlDatabase(wxConfigBase& config, wxString* err)
 {
 	if (!config.HasGroup("MySQL"))
@@ -1247,5 +1247,6 @@ wxDatabase* wxDatabase::GetTdsDatabase(wxConfigBase& config, wxString* err)
 	return pDatabase; 
 }
 #endif
+ 
 
 //AML end

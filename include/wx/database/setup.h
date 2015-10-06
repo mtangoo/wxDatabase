@@ -8,7 +8,7 @@
 // Recommended setting: 1
 #define wxUSE_DATABASE_SQLITE		0
 #define wxUSE_DATABASE_POSTGRESQL	0
-#define wxUSE_DATABASE_MYSQL		   1
+#define wxUSE_DATABASE_MYSQL		  0
 #define wxUSE_DATABASE_ODBC			0
 #define wxUSE_DATABASE_TDS			0
 

@@ -1,21 +1,10 @@
-wxDatabase is built on the excellent work of Joseph Blough called DatabaseLayer. This excellent library have been abandoned since 2009. I was finding a suitable database
-library to fit my needs and tried different solutions. I found them so missing few things that I though may be I make mine. Before that I said I would check with databaselayer.
+wxDatabase is built on the excellent work of Joseph Blough called DatabaseLayer.  You can read its story on history file.
+BUILDING
+To build wxDatabase, you need to have the database ou want to connect ready with headers and library. I will explain using MySQL but the process is the same with any other database.
 
-I found that this work should not be let to die. So I picked up the work. Since I felt JB's way of naming somehow not matching general wx naming, I refactored the code. So much
-have been prefixed with "wx" as well as removing the "layer". File name have changed also. 
-
-And since I have ambitious plans to see it integrated in wxWidgets (like SQL classes in QT) I will
-maintain it. Here are few things I have done which are (unfortunately) not pleasing to many:
-- I have dropped support for all other databases leaving only MySQL, SQLite3, Postgres and ODBC. I don't have enough time to maintain all of those plus you can go ODBC way!
-- I have renamed files and classes to match with wx nomenclature (though not strictly)
-
-Here are few things I plan to do
-- Add support for static linking with underlying libraries
-- Add bakefile support to help generate makefiles and projects
-
-Finally I would like to thank Joseph for his excellent work. I'm grateful to my company also
-for allowing me to do this work of maintanance.
-
-Mungu awabariki!
-Stefano,
-Dar es Salaam, Tanzania
+MYSQL
+1. [Download](https://dev.mysql.com/downloads/connector/c/) MySQL Connector C and Install it. In Linux you just need to install development library of MySQL
+2. Open your Console (CMD for windows fo example) and cd to build sub-folder in wxDatabase root directory
+3. Run CMake command to generate your flavour (e.g. cmake Verbose=1 -G "MinGW Makefiles" ../)
+4. run make program (for MinGW files use mingw32-make)
+5. Enjoy your libraries in build folder)
