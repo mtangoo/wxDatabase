@@ -1,16 +1,8 @@
 #ifndef _WX_DATABASE_SETUP_H_
 #define _WX_DATABASE_SETUP_H_
-
-// Use Joseph Blount's database layer databases.  Recommended.
-//
-// Default is 0
-//
-// Recommended setting: 1
-#define wxUSE_DATABASE_SQLITE		0
-#define wxUSE_DATABASE_POSTGRESQL	0
-#define wxUSE_DATABASE_MYSQL		  0
-#define wxUSE_DATABASE_ODBC			0
-#define wxUSE_DATABASE_TDS			0
+ //This file remains for historical reasons AND the exceptions activation
+ //It will be removed in future after removing support for exception
+ //TODO: Remove exceptions and Use TRUE/FALSE for testing success AND GetLastErrorxx for getting error
 
 // Use database exceptions.  Recommended.
 //
