@@ -40,7 +40,9 @@ FIND_PATH(MYSQL_INCLUDE_DIR mysql.h
   /usr/local/mysql/include
   /usr/local/mysql/include/mysql
   $ENV{ProgramFiles}/MySQL/*/include
-  $ENV{SystemDrive}/MySQL/*/include)
+  $ENV{SystemDrive}/MySQL/*/include  
+  $ENV{SystemDrive}/MariaDB/*/include
+  $ENV{ProgramFiles}/MariaDB/*/include)
 
 #----------------- FIND MYSQL_LIB_DIR -------------------
 IF (WIN32)
@@ -56,7 +58,7 @@ IF (WIN32)
     ADD_DEFINITIONS(-DDBUG_OFF)
   ENDIF (CMAKE_BUILD_TYPE STREQUAL Debug)
 
-  FIND_LIBRARY(MYSQL_LIB NAMES mysqlclient
+  FIND_LIBRARY(MYSQL_LIB NAMES mysqlclient mariadb
     PATHS
     $ENV{MYSQL_DIR}/lib/${libsuffixDist}
     $ENV{MYSQL_DIR}/libmysql
@@ -64,7 +66,17 @@ IF (WIN32)
     $ENV{MYSQL_DIR}/client/${libsuffixBuild}
     $ENV{MYSQL_DIR}/libmysql/${libsuffixBuild}
     $ENV{ProgramFiles}/MySQL/*/lib/${libsuffixDist}
-    $ENV{SystemDrive}/MySQL/*/lib/${libsuffixDist})
+    $ENV{SystemDrive}/MySQL/*/lib/${libsuffixDist}
+    
+    $ENV{MYSQL_DIR}/lib/${libsuffixDist}
+    $ENV{MYSQL_DIR}/libmariadb
+    $ENV{MYSQL_DIR}/libmariadb/${libsuffixBuild}
+    $ENV{MYSQL_DIR}/client/${libsuffixBuild}
+    $ENV{MYSQL_DIR}/libmariadb/${libsuffixBuild}
+    $ENV{ProgramFiles}/MariaDB/*/lib/
+    $ENV{ProgramFiles}/MariaDB/*/lib/${libsuffixDist}
+    $ENV{SystemDrive}/MariaDB/*/lib/${libsuffixDist}
+    )
 ELSE (WIN32)
   FIND_LIBRARY(MYSQL_LIB NAMES mysqlclient_r
     PATHS

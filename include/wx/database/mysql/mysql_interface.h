@@ -25,7 +25,10 @@ typedef unsigned int (STDCALL *MysqlStmtErrnoType)(MYSQL_STMT*);
 typedef my_bool (STDCALL *MysqlStmtFreeResultType)(MYSQL_STMT*);
 typedef my_bool (STDCALL *MysqlStmtCloseType)(MYSQL_STMT*);
 typedef MYSQL_RES* (STDCALL *MysqlListTablesType)(MYSQL*, const char*);
+
 typedef MYSQL_ROW (STDCALL *MysqlFetchRowType)(MYSQL_RES*);
+typedef MYSQL_FIELD * (STDCALL *MysqlFetchFieldType)(MYSQL_RES*);
+
 typedef void (STDCALL *MysqlFreeResultType)(MYSQL_RES*);
 typedef unsigned long (STDCALL *MysqlGetServerVersionType)(MYSQL*);
 typedef MYSQL_RES* (STDCALL *MysqlStmtResultMetadataType)(MYSQL_STMT*);
@@ -35,6 +38,7 @@ typedef my_bool (STDCALL *MysqlStmtBindParamType)(MYSQL_STMT*, MYSQL_BIND*);
 typedef int (STDCALL *MysqlStmtFetchType)(MYSQL_STMT*);
 typedef my_bool (STDCALL *MysqlStmtBindResultType)(MYSQL_STMT*, MYSQL_BIND*);
 typedef int (STDCALL *MysqlSelectDatabaseType)(MYSQL *mysql, const char *db);
+typedef int (STDCALL *MysqlStmtAffectedRows)(MYSQL_STMT*);
 
 
 class wxMysqlDynamicInterface
@@ -55,6 +59,7 @@ public:
   MysqlRollbackType GetMysqlRollback() { return m_pMysqlRollback; }
   MysqlQueryType GetMysqlQuery() { return m_pMysqlQuery; }
   MysqlAffectedRowsType GetMysqlAffectedRows() { return m_pMysqlAffectedRows; }
+  MysqlStmtAffectedRows GetMysqlStmtAffectedRows() { return m_pMysqlStmtAffectedRows; }
   MysqlStmtInitType GetMysqlStmtInit() { return m_pMysqlStmtInit; }
   MysqlStmtPrepareType GetMysqlStmtPrepare() { return m_pMysqlStmtPrepare; }
   MysqlStmtExecuteType GetMysqlStmtExecute() { return m_pMysqlStmtExecute; }
@@ -63,7 +68,10 @@ public:
   MysqlStmtFreeResultType GetMysqlStmtFreeResult() { return m_pMysqlStmtFreeResult; }
   MysqlStmtCloseType GetMysqlStmtClose() { return m_pMysqlStmtClose; }
   MysqlListTablesType GetMysqlListTables() { return m_pMysqlListTables; }
+  
   MysqlFetchRowType GetMysqlFetchRow() { return m_pMysqlFetchRow; }
+  MysqlFetchFieldType GetMysqlFetchField() { return m_pMysqlFetchField; }
+  
   MysqlFreeResultType GetMysqlFreeResult() { return m_pMysqlFreeResult; }
   MysqlGetServerVersionType GetMysqlGetServerVersion() { return m_pMysqlGetServerVersion; }
   MysqlStmtResultMetadataType GetMysqlStmtResultMetadata() { return m_pMysqlStmtResultMetadata; }
@@ -89,6 +97,7 @@ private:
   MysqlRollbackType m_pMysqlRollback;
   MysqlQueryType m_pMysqlQuery;
   MysqlAffectedRowsType m_pMysqlAffectedRows;
+  MysqlStmtAffectedRows m_pMysqlStmtAffectedRows;
   MysqlStmtInitType m_pMysqlStmtInit;
   MysqlStmtPrepareType m_pMysqlStmtPrepare;
   MysqlStmtExecuteType m_pMysqlStmtExecute;
@@ -98,6 +107,7 @@ private:
   MysqlStmtCloseType m_pMysqlStmtClose;
   MysqlListTablesType m_pMysqlListTables;
   MysqlFetchRowType m_pMysqlFetchRow;
+  MysqlFetchFieldType m_pMysqlFetchField;
   MysqlFreeResultType m_pMysqlFreeResult;
   MysqlGetServerVersionType m_pMysqlGetServerVersion;
   MysqlStmtResultMetadataType m_pMysqlStmtResultMetadata;

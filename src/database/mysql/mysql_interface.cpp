@@ -134,6 +134,16 @@ bool wxMysqlDynamicInterface::Init()
     return false;
   }
 
+  symbol = wxT("mysql_stmt_affected_rows");
+  if (m_MysqlDLL.HasSymbol(symbol))
+  {
+    m_pMysqlStmtAffectedRows = (MysqlStmtAffectedRows)m_MysqlDLL.GetSymbol(symbol);
+  }
+  else
+  {
+    return false;
+  }
+
   symbol = wxT("mysql_affected_rows");
   if (m_MysqlDLL.HasSymbol(symbol))
   {
@@ -228,6 +238,16 @@ bool wxMysqlDynamicInterface::Init()
   if (m_MysqlDLL.HasSymbol(symbol))
   {
     m_pMysqlFetchRow = (MysqlFetchRowType)m_MysqlDLL.GetSymbol(symbol);
+  }
+  else
+  {
+    return false;
+  }
+
+  symbol = wxT("mysql_fetch_field");
+  if (m_MysqlDLL.HasSymbol(symbol))
+  {
+    m_pMysqlFetchField = (MysqlFetchFieldType)m_MysqlDLL.GetSymbol(symbol);
   }
   else
   {

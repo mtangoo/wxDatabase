@@ -32,9 +32,9 @@ wxMysqlPreparedStatementResultSet::wxMysqlPreparedStatementResultSet(wxMysqlDyna
     memset(m_pResultBindings, 0, sizeof(MYSQL_BIND)*nParameters);
 
     MYSQL_BIND* pCurrentBinding = m_pResultBindings;
-    MYSQL_FIELD* pCurrentField = pResultMetadata->fields;
+    MYSQL_FIELD* pCurrentField = m_pInterface->GetMysqlFetchField()(pResultMetadata);
     for (int i=0; i<nParameters; i++)
-    {
+    { 
       // Set up the map so we can look this value up later
       wxString strFieldName = ConvertFromUnicodeStream(pCurrentField->name);
 

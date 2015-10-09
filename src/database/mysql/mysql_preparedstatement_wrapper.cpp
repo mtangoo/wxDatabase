@@ -91,7 +91,7 @@ int wxMysqlPreparedStatementWrapper::RunQuery()
   }
   wxDELETEA(pBoundParameters);
 
-  return (m_pStatement->affected_rows);
+  return m_pInterface->GetMysqlStmtAffectedRows()(m_pStatement);
 }
 
 wxDatabaseResultSet* wxMysqlPreparedStatementWrapper::RunQueryWithResults()
