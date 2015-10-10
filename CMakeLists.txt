@@ -1,8 +1,7 @@
 #To Do List
 #Build Types from Options -- Debug Release
 #making DLL/LIB
-#Add Support for Other DB than MySQL on build
-#Fix the redefined error visible when verbose=1
+#Add Support for Other DB than MySQL on build 
 
 cmake_minimum_required (VERSION 2.8)
 project (wxDatabase)
@@ -17,7 +16,7 @@ option (ENABLE_SQLITE "Enable SQLite3 Database" ON)
 option (ENABLE_PGS "Enable PostGreSQL Database" OFF) 
 option (ENABLE_TDS "Enable MSSQL Access with TDS Database" OFF) 
 option (ENABLE_ODBC "Enable ODBC Access" OFF) 
-option (BUILD_SAMPLE "Build Sample Application" OFF) 
+option (BUILD_SAMPLE "Build Sample Application" ON) 
 #Build type
 set(CMAKE_BUILD_TYPE Debug)
 #to specify wxDir on non Windows you need extra check for wxWonfig
@@ -25,7 +24,7 @@ set(CMAKE_BUILD_TYPE Debug)
 if(WIN32)
     #set(wxWidgets_ROOT_DIR, "YOUR wx Path")
 else(WIN32)
-    set(wxWidgets_ROOT_DIR, /home/stefano/Documents/developer/git/wxwidgets)
+    #pass it with option like this --> cmake -DwxWidgets_ROOT_DIR=/home/stefano/wxwidgets   
     set(wxWidgets_CONFIG_EXECUTABLE "${wxWidgets_ROOT_DIR}/wx-config")
 endif(WIN32) 
 
@@ -44,29 +43,24 @@ file(GLOB CORE_DB_SRC "src/database/*.cpp")
 list(APPEND SOURCES ${CORE_DB_SRC})  
 
 #Support for MySQL?
-if (ENABLE_MYSQL) 
-	if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/vendors/mariadb/include/mysql2.h)
-		include(${CMAKE_CURRENT_SOURCE_DIR}/vendors/mariadb/CMakeLists.txt)
-	else()
-		find_package(MySQL REQUIRED)
-		if(MYSQL_FOUND)
-			#add MySQL include and libs
-			include_directories(${MYSQL_INCLUDE_DIR})  
-			#Link MySQL Libraries
-			#LINK_DIRECTORIES(${MYSQL_LIB_DIR})
-			#TARGET_LINK_LIBRARIES(${MYSQL_CLIENT_LIBS})
-			
-			#add wxDatabase MySQL Include and sources for compiling
-			INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/database/mysql)
-			
-			#append to main SRC
-			file(GLOB CORE_MYSQL_SRC "src/database/mysql/*.cpp")
-			list(APPEND SOURCES ${CORE_MYSQL_SRC})  	
-			#Tell CMake to Pass this variable_requires
-			add_definitions(-DwxUSE_DATABASE_MYSQL=1)
-		endif(MYSQL_FOUND)
-	endif()
-	
+if (ENABLE_MYSQL)   
+    find_package(MySQL REQUIRED)
+    if(MYSQL_FOUND)
+        #add MySQL include and libs
+        include_directories(${MYSQL_INCLUDE_DIR})  
+        #Link MySQL Libraries
+        #LINK_DIRECTORIES(${MYSQL_LIB_DIR})
+        #TARGET_LINK_LIBRARIES(${MYSQL_CLIENT_LIBS})
+        
+        #add wxDatabase MySQL Include and sources for compiling
+        INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/database/mysql)
+        
+        #append to main SRC
+        file(GLOB CORE_MYSQL_SRC "src/database/mysql/*.cpp")
+        list(APPEND SOURCES ${CORE_MYSQL_SRC})  	
+        #Tell CMake to Pass this variable_requires
+        add_definitions(-DwxUSE_DATABASE_MYSQL=1)
+    endif(MYSQL_FOUND) 	
 endif (ENABLE_MYSQL) 
 
 
@@ -118,7 +112,7 @@ add_library(${LIB_OUTPUT_NAME} SHARED ${SOURCES})
 find_package(wxWidgets REQUIRED)
 if(wxWidgets_FOUND)
 	include(${wxWidgets_USE_FILE}) 
-	target_link_libraries(${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES})
+	target_link_libraries(${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES}) 
 else(wxWidgets_FOUND)
 	message( FATAL_ERROR "wxWidgets Not Found. Please define and set wxWidgets_ROOT_DIR or add it to System path" )
 endif(wxWidgets_FOUND)
@@ -127,13 +121,19 @@ if(BUILD_SAMPLE) #build Samples
 	if(ENABLE_SQLITE)
 		add_executable (wxDatabaseApp_SQLite3 ${CMAKE_CURRENT_SOURCE_DIR}/samples/sqlite3.cpp)
 		link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
-		target_link_libraries(wxDatabaseApp_SQLite3 ${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES})
+		target_link_libraries(wxDatabaseApp_SQLite3 ${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES}) 
 	endif(ENABLE_SQLITE)
 	
 	if(ENABLE_MYSQL)
 		add_executable(wxDatabaseApp_MySQL ${CMAKE_CURRENT_SOURCE_DIR}/samples/mysql.cpp)
 		link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
-		target_link_libraries(wxDatabaseApp_MySQL ${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES})
+		target_link_libraries(wxDatabaseApp_MySQL ${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES}) 
 	endif(ENABLE_MYSQL)
 	
 endif(BUILD_SAMPLE)
+
+#Install 
+install (DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+install (TARGETS wxDatabaseApp_MySQL RUNTIME DESTINATION samples)
+install (TARGETS wxDatabaseApp_SQLite3 RUNTIME DESTINATION samples)
+install (TARGETS ${LIB_OUTPUT_NAME} LIBRARY DESTINATION lib)
