@@ -17,7 +17,7 @@ option (ENABLE_SQLITE "Enable SQLite3 Database" ON)
 option (ENABLE_PGS "Enable PostGreSQL Database" OFF) 
 option (ENABLE_TDS "Enable MSSQL Access with TDS Database" OFF) 
 option (ENABLE_ODBC "Enable ODBC Access" OFF) 
-option (BUILD_SAMPLE "Build Sample Application" ON) 
+option (BUILD_SAMPLE "Build Sample Application" OFF) 
 #Build type
 set(CMAKE_BUILD_TYPE Debug)
 #to specify wxDir on non Windows you need extra check for wxWonfig
@@ -111,13 +111,14 @@ endif (ENABLE_SQLITE)
 add_definitions(-DWXMAKINGDLL_DATABASE) #WXMAKINGLIB_DATABASE
 
 #Compile library
-add_library(${CMAKE_PROJECT_NAME} SHARED ${SOURCES}) 
+string(TOLOWER ${CMAKE_PROJECT_NAME} LIB_OUTPUT_NAME)
+add_library(${LIB_OUTPUT_NAME} SHARED ${SOURCES}) 
 
 #Check wxWidgets first and fail if does not exist
 find_package(wxWidgets REQUIRED)
 if(wxWidgets_FOUND)
 	include(${wxWidgets_USE_FILE}) 
-	target_link_libraries(${CMAKE_PROJECT_NAME} ${wxWidgets_LIBRARIES})
+	target_link_libraries(${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES})
 else(wxWidgets_FOUND)
 	message( FATAL_ERROR "wxWidgets Not Found. Please define and set wxWidgets_ROOT_DIR or add it to System path" )
 endif(wxWidgets_FOUND)
@@ -126,13 +127,13 @@ if(BUILD_SAMPLE) #build Samples
 	if(ENABLE_SQLITE)
 		add_executable (wxDatabaseApp_SQLite3 ${CMAKE_CURRENT_SOURCE_DIR}/samples/sqlite3.cpp)
 		link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
-		target_link_libraries(wxDatabaseApp_SQLite3 ${CMAKE_PROJECT_NAME} ${wxWidgets_LIBRARIES})
+		target_link_libraries(wxDatabaseApp_SQLite3 ${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES})
 	endif(ENABLE_SQLITE)
 	
 	if(ENABLE_MYSQL)
 		add_executable(wxDatabaseApp_MySQL ${CMAKE_CURRENT_SOURCE_DIR}/samples/mysql.cpp)
 		link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
-		target_link_libraries(wxDatabaseApp_MySQL ${CMAKE_PROJECT_NAME} ${wxWidgets_LIBRARIES})
+		target_link_libraries(wxDatabaseApp_MySQL ${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES})
 	endif(ENABLE_MYSQL)
 	
 endif(BUILD_SAMPLE)
