@@ -1040,12 +1040,12 @@ wxDatabase* wxDatabase::GetPostgresDatabase(wxConfigBase& config, wxString* err)
 	bool haveServerInfo = config.Read("server", &server, wxEmptyString);
 	bool haveUserInfo = config.Read("user", &user, wxEmptyString);
 	config.Read("password", &password, wxEmptyString);
-	config.Read("port", &port, 5432);
+	config.Read("port", &nPort, 5432);
 
 	wxPostgresDatabase* pDatabase;
 
 	if (haveServerInfo && haveUserInfo)
-		pDatabase = new wxPostgresDatabase(server, port, database, user, password);
+		pDatabase = new wxPostgresDatabase(server, nPort, database, user, password);
 	else if (haveServerInfo && !haveUserInfo)
 		pDatabase = new wxPostgresDatabase(server, database);
 	else if (haveUserInfo && !haveServerInfo)

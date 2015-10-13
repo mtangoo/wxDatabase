@@ -43,7 +43,7 @@
 	#include "wx/database/sqlite3/sqlite_resultset_metatdata.h"
 #endif
 #if wxUSE_DATABASE_POSTGRESQL
-	#include "libpq/libpq-fe.h"
+	#include "libpq-fe.h"
 	#include "libpq/libpq-fs.h"
 	#include "wx/database/postgresql/postgresql_database.h"
 	#include "wx/database/postgresql/postgresql_interface.h"

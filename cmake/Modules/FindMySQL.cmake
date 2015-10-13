@@ -26,6 +26,8 @@
 # this software, see the FLOSS License Exception available on
 # mysql.com.
 
+#Edited by Stefano Mtangoo - hosannahighertech.co.tz
+
 ##########################################################################
 
 
@@ -103,7 +105,14 @@ IF (MYSQL_INCLUDE_DIR AND MYSQL_LIB_DIR)
   FIND_LIBRARY(MYSQL_ZLIB zlib PATHS ${MYSQL_LIB_DIR})
   FIND_LIBRARY(MYSQL_YASSL yassl PATHS ${MYSQL_LIB_DIR})
   FIND_LIBRARY(MYSQL_TAOCRYPT taocrypt PATHS ${MYSQL_LIB_DIR})
-  SET(MYSQL_CLIENT_LIBS mysqlclient_r)
+  
+  SET(IS_MARIADB ".MariaDB." )
+  IF(IS_MARIADB)
+	SET(MYSQL_CLIENT_LIBS mariadb)
+  ELSE(IS_MARIADB)
+	SET(MYSQL_CLIENT_LIBS mysqlclient_r)
+  ENDIF(IS_MARIADB)
+  
   IF (MYSQL_ZLIB)
     SET(MYSQL_CLIENT_LIBS ${MYSQL_CLIENT_LIBS} zlib)
   ENDIF (MYSQL_ZLIB)

@@ -2,6 +2,7 @@
 #define _WX_DATABASE_POSTGRESQL_PREPARED_STATEMENT_WRAPPER_H_
 
 #include "wx/database/wxprec.h"
+#include "wx/database/postgresql/postgresql_preparedstatement_parameter_collection.h"
 
 class wxDatabaseResultSet;
 

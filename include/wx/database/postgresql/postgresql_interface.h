@@ -2,6 +2,7 @@
 #define _WX_DATABASE_POSTGRESQL_INTERFACES_H_
 
 #include "wx/database/wxprec.h"
+#include <wx/dynlib.h>
 
 typedef ConnStatusType (*PQstatusType)(const PGconn*);
 typedef PGconn* (*PQsetdbLoginType)(const char*, const char*,
