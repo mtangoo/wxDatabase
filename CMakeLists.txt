@@ -125,7 +125,10 @@ if (ENABLE_PGS)
         list(APPEND SOURCES ${CORE_PGS_SRC})  	
         #Tell CMake to Pass this variable_requires
         add_definitions(-DwxUSE_DATABASE_POSTGRESQL=1)
-        add_definitions(-DHAVE_STRUCT_TIMESPEC)
+        #Ignore the definition of timespec in pthread.h
+        if (MINGW)
+            add_definitions(-DHAVE_STRUCT_TIMESPEC)
+        endif (MINGW)
     endif(PostgreSQL_FOUND) 	
 endif (ENABLE_PGS)  
 
