@@ -25,8 +25,8 @@ set(CMAKE_BUILD_TYPE Debug)
 if(WIN32)
     #set(wxWidgets_ROOT_DIR, "YOUR wx Path")
 else(WIN32)
-    #pass it with option like this --> cmake -DwxWidgets_ROOT_DIR=/home/stefano/wxwidgets   
-    set(wxWidgets_CONFIG_EXECUTABLE "${wxWidgets_ROOT_DIR}/wx-config")
+    #pass it with option like this --> cmake -DWXWIN=/home/stefano/wxwidgets   
+    set(wxWidgets_CONFIG_EXECUTABLE "${WXWIN}/wx-config")
 endif(WIN32) 
 
 #Set Directories
@@ -52,7 +52,7 @@ find_package(wxWidgets REQUIRED)
 if(wxWidgets_FOUND) 
 	include(${wxWidgets_USE_FILE})  
 else(wxWidgets_FOUND)
-	message( FATAL_ERROR "wxWidgets Not Found. Please define and set wxWidgets_ROOT_DIR or add it to System path" )
+	message( FATAL_ERROR "wxWidgets Not Found. Please define and set WXWIN or add it to System path" )
 endif(wxWidgets_FOUND)
 
 #Support for MySQL?
@@ -73,7 +73,6 @@ if (ENABLE_MYSQL)
         add_definitions(-DwxUSE_DATABASE_MYSQL=1)
     endif(MYSQL_FOUND) 	
 endif (ENABLE_MYSQL) 
-
 
 #Support for SQLite3?
 if (ENABLE_SQLITE)
@@ -109,9 +108,8 @@ if (ENABLE_SQLITE)
         
     endif()        
 endif (ENABLE_SQLITE) 
- 
 
-#Support for MySQL?
+#Support for PostgreSQL?
 if (ENABLE_PGS)   
     find_package(PostgreSQL REQUIRED)
     if(PostgreSQL_FOUND)
@@ -127,6 +125,10 @@ if (ENABLE_PGS)
         list(APPEND SOURCES ${CORE_PGS_SRC})  	
         #Tell CMake to Pass this variable_requires
         add_definitions(-DwxUSE_DATABASE_POSTGRESQL=1)
+        #Ignore the definition of timespec in pthread.h
+        if (MINGW)
+            add_definitions(-DHAVE_STRUCT_TIMESPEC)
+        endif (MINGW)
     endif(PostgreSQL_FOUND) 	
 endif (ENABLE_PGS)  
 
