@@ -74,7 +74,6 @@ if (ENABLE_MYSQL)
     endif(MYSQL_FOUND) 	
 endif (ENABLE_MYSQL) 
 
-
 #Support for SQLite3?
 if (ENABLE_SQLITE)
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/vendors/sqlite3/sqlite3.h)
@@ -109,9 +108,8 @@ if (ENABLE_SQLITE)
         
     endif()        
 endif (ENABLE_SQLITE) 
- 
 
-#Support for MySQL?
+#Support for PostgreSQL?
 if (ENABLE_PGS)   
     find_package(PostgreSQL REQUIRED)
     if(PostgreSQL_FOUND)
@@ -127,6 +125,7 @@ if (ENABLE_PGS)
         list(APPEND SOURCES ${CORE_PGS_SRC})  	
         #Tell CMake to Pass this variable_requires
         add_definitions(-DwxUSE_DATABASE_POSTGRESQL=1)
+        add_definitions(-DHAVE_STRUCT_TIMESPEC)
     endif(PostgreSQL_FOUND) 	
 endif (ENABLE_PGS)  
 
