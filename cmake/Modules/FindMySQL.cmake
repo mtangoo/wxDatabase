@@ -59,8 +59,11 @@ IF (WIN32)
     SET(libsuffixBuild Release)
     ADD_DEFINITIONS(-DDBUG_OFF)
   ENDIF (CMAKE_BUILD_TYPE STREQUAL Debug)
+  
+  # Work around $ENV problem searching for Program Files(x86)
+  set(ProgramFiles86 "Program Files (x86)")
 
-  FIND_LIBRARY(MYSQL_LIB NAMES mysqlclient mariadb
+  FIND_LIBRARY(MYSQL_LIB NAMES mysqlclient mariadb libmysql
     PATHS
     $ENV{MYSQL_DIR}/lib/${libsuffixDist}
     $ENV{MYSQL_DIR}/libmysql
@@ -68,6 +71,7 @@ IF (WIN32)
     $ENV{MYSQL_DIR}/client/${libsuffixBuild}
     $ENV{MYSQL_DIR}/libmysql/${libsuffixBuild}
     $ENV{ProgramFiles}/MySQL/*/lib/${libsuffixDist}
+    $ENV{ProgramFiles}/MySQL/*/lib/
     $ENV{SystemDrive}/MySQL/*/lib/${libsuffixDist}
     
     $ENV{MYSQL_DIR}/lib/${libsuffixDist}
