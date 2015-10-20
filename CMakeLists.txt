@@ -20,10 +20,11 @@ option (ENABLE_ODBC "Enable ODBC Access" OFF)
 option (BUILD_SAMPLE "Build Sample Application" ON) 
 #Build type
 set(CMAKE_BUILD_TYPE Debug)
-#to specify wxDir on non Windows you need extra check for wxWonfig
+#to specify wxDir on non-Windows you need extra check for wxConfig
 
 if(WIN32)
-    #set(wxWidgets_ROOT_DIR, "YOUR wx Path")
+    #the next line can be used to set an environment variable or it can be done inside a shell
+    #set (WXWIN, "home/stefano/wxwidgets")
 else(WIN32)
     #pass it with option like this --> cmake -DWXWIN=/home/stefano/wxwidgets   
     set(wxWidgets_CONFIG_EXECUTABLE "${WXWIN}/wx-config")
@@ -52,7 +53,8 @@ find_package(wxWidgets REQUIRED)
 if(wxWidgets_FOUND) 
 	include(${wxWidgets_USE_FILE})  
 else(wxWidgets_FOUND)
-	message( FATAL_ERROR "wxWidgets Not Found. Please define and set WXWIN or add it to System path" )
+    #This message does not seem to be sent, even if wxWidgets is not found.
+	message(FATAL_ERROR "wxWidgets Not Found. Please set WXWIN or add it to System path")
 endif(wxWidgets_FOUND)
 
 #Support for MySQL?
