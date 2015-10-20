@@ -55,6 +55,9 @@
 	#include "wx/database/postgresql/postgresql_resultset_metadata.h"
 #endif
 #if wxUSE_DATABASE_MYSQL
+#if !defined (_MSC_VER)
+    #include <psdk_inc/_socket_types.h>
+#endif
 	#include <mysql.h>
 	#include <errmsg.h>
 	#include "wx/database/mysql/mysql_database.h"
