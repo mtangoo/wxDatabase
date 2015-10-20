@@ -25,8 +25,8 @@ set(CMAKE_BUILD_TYPE Debug)
 if(WIN32)
     #set(wxWidgets_ROOT_DIR, "YOUR wx Path")
 else(WIN32)
-    #pass it with option like this --> cmake -DwxWidgets_ROOT_DIR=/home/stefano/wxwidgets   
-    set(wxWidgets_CONFIG_EXECUTABLE "${wxWidgets_ROOT_DIR}/wx-config")
+    #pass it with option like this --> cmake -DWXWIN=/home/stefano/wxwidgets   
+    set(wxWidgets_CONFIG_EXECUTABLE "${WXWIN}/wx-config")
 endif(WIN32) 
 
 #Set Directories
@@ -52,7 +52,7 @@ find_package(wxWidgets REQUIRED)
 if(wxWidgets_FOUND) 
 	include(${wxWidgets_USE_FILE})  
 else(wxWidgets_FOUND)
-	message( FATAL_ERROR "wxWidgets Not Found. Please define and set wxWidgets_ROOT_DIR or add it to System path" )
+	message( FATAL_ERROR "wxWidgets Not Found. Please define and set WXWIN or add it to System path" )
 endif(wxWidgets_FOUND)
 
 #Support for MySQL?
