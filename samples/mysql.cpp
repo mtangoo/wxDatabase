@@ -23,6 +23,7 @@ bool wxDatabaseApp::OnInit()
 
 int wxDatabaseApp::OnRun()
 { 
+    wxDatabase *pDatabase = NULL;
     try
     { 
         //Create table
@@ -31,7 +32,7 @@ int wxDatabaseApp::OnRun()
 		wxString strDatabase = "test";//set your database
 		wxString strUser = "root";
 		wxString  strPassword = "";
-        wxDatabase *pDatabase = new wxMysqlDatabase(strServer, strDatabase, strUser, strPassword);
+        pDatabase = new wxMysqlDatabase(strServer, strDatabase, strUser, strPassword);
         pDatabase->RunQuery(createSql);
         
         //insert into table
@@ -76,5 +77,7 @@ int wxDatabaseApp::OnRun()
       return e.GetErrorCode();
     }
     
+    if(pDatabase)
+        delete pDatabase;
    return 0;
 }

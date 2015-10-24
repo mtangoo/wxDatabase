@@ -23,6 +23,7 @@ bool wxDatabaseApp::OnInit()
 
 int wxDatabaseApp::OnRun()
 { 
+    wxDatabase *pDatabase = NULL;
     try
     { 
         //Create table 
@@ -31,7 +32,7 @@ int wxDatabaseApp::OnRun()
 		wxString strDatabase = "test"; 
 		wxString strUser = "postgres"; 
 		wxString  strPassword = "jesus"; 
-        wxDatabase *pDatabase = new wxPostgresDatabase(strServer, strDatabase, strUser, strPassword); 
+        pDatabase = new wxPostgresDatabase(strServer, strDatabase, strUser, strPassword); 
         pDatabase->RunQuery(createSqlTB);
         
         //insert into table
@@ -75,6 +76,8 @@ int wxDatabaseApp::OnRun()
       
       return e.GetErrorCode();
     }
+    if(pDatabase)
+        delete pDatabase;
     
    return 0;
 }

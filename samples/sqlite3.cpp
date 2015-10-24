@@ -23,12 +23,13 @@ bool wxDatabaseApp::OnInit()
 
 int wxDatabaseApp::OnRun()
 { 
+    wxDatabase *pDatabase = NULL;
     try
     {
         //Create table
         wxString createSql = "CREATE TABLE Names (ID INTEGER PRIMARY KEY NOT NULL, Name TEXT NOT NULL);";
 
-        wxDatabase *pDatabase = new wxSqliteDatabase("sample.sqlite3");
+        pDatabase = new wxSqliteDatabase("sample.sqlite3");
         pDatabase->RunQuery(createSql);
         
         //insert into table
@@ -72,6 +73,9 @@ int wxDatabaseApp::OnRun()
       
       return e.GetErrorCode();
     }
+    
+    if(pDatabase)
+        delete pDatabase;
     
    return 0;
 }
