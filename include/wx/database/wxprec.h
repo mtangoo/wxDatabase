@@ -54,10 +54,15 @@
 	#include "wx/database/postgresql/postgresql_resultset.h"
 	#include "wx/database/postgresql/postgresql_resultset_metadata.h"
 #endif
+
 #if wxUSE_DATABASE_MYSQL
-#if !defined (_MSC_VER)
+/*
+ * Work around missing definition of SOCKET in mingw headers 
+*/ 
+#if defined(__WXMSW__) && !defined(_MSC_VER)
     #include <psdk_inc/_socket_types.h>
-#endif
+#endif 
+
 	#include <mysql.h>
 	#include <errmsg.h>
 	#include "wx/database/mysql/mysql_database.h"
