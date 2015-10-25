@@ -250,7 +250,7 @@ SQLUINTEGER wxOdbcParameter::GetColumnSize()
   return nReturn;
 }
 
-SQLINTEGER* wxOdbcParameter::GetParameterLengthPtr()
+SQLLEN* wxOdbcParameter::GetParameterLengthPtr()
 {
   return &m_nBufferLength;
 }

@@ -192,7 +192,7 @@ void wxOdbcResultSet::RetrieveFieldData(int nField)
       if (SQL_FLOAT == colType || SQL_DOUBLE == colType)
       {
         SQLFLOAT ret;
-        SQLINTEGER sqlPtr;
+        SQLLEN sqlPtr;
         rc = m_pInterface->GetSQLGetData()(m_pOdbcStatement, nField, SQL_C_DOUBLE, &ret, 0, &sqlPtr);
         if (rc != SQL_SUCCESS && rc != SQL_SUCCESS_WITH_INFO)
         {
@@ -217,7 +217,7 @@ void wxOdbcResultSet::RetrieveFieldData(int nField)
       else if (SQL_DATETIME == colType)
       {
         TIMESTAMP_STRUCT ret;
-        SQLINTEGER sqlPtr;
+        SQLLEN sqlPtr;
         rc = m_pInterface->GetSQLGetData()(m_pOdbcStatement, nField, SQL_C_TIMESTAMP, &ret, sizeof(ret),
           &sqlPtr);
 
@@ -253,7 +253,7 @@ void wxOdbcResultSet::RetrieveFieldData(int nField)
         memset(buff, 0, 8192*sizeof(SQLTCHAR));
 
         SQLINTEGER  col_size         = 8192;
-        SQLINTEGER  real_size        = 0;
+        SQLLEN  real_size        = 0;
 
         if (m_pOdbcStatement == NULL)
             m_pOdbcStatement = m_pStatement->GetLastStatement();
@@ -378,7 +378,7 @@ void* wxOdbcResultSet::GetResultBlob(int nField, wxMemoryBuffer& Buffer)
         return NULL;
 
       SQLINTEGER iLength = 8192;
-      SQLINTEGER iSize = 0;
+      SQLLEN iSize = 0;
       unsigned char buff[8193];
 
       memset(buff, 0, 8193*sizeof(unsigned char));
@@ -522,7 +522,7 @@ bool wxOdbcResultSet::IsBlob(int nField)
   SQLTCHAR      col_name[8192];
   SQLSMALLINT   col_name_length;
   SQLSMALLINT   col_data_type;
-  SQLUINTEGER   col_size;
+  SQLULEN   col_size;
   SQLSMALLINT   col_decimal_digits;
   SQLSMALLINT   col_nullable;
 

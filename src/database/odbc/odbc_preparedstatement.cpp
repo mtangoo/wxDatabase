@@ -172,7 +172,7 @@ int wxOdbcPreparedStatement::RunQuery()
 
     BindParameters();
 
-    SQLINTEGER nRows = wxDATABASE_QUERY_RESULT_ERROR;
+    SQLLEN nRows = wxDATABASE_QUERY_RESULT_ERROR;
     wxOdbcStatementVector::iterator start = m_Statements.begin();
     wxOdbcStatementVector::iterator stop = m_Statements.end();
     while (start != stop)

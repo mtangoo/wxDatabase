@@ -463,7 +463,7 @@ wxArrayString wxOdbcDatabase::GetTables()
     memset(buff, 0, 8192*sizeof(SQLTCHAR));
 
     SQLINTEGER  col_size         = 8192;
-    SQLINTEGER  real_size        = 0;
+    SQLLEN  real_size        = 0;
     int nField = 3;
 
     SQLRETURN nGetDataReturn = m_pInterface->GetSQLGetData()(pStatement, nField, SQL_C_CHAR, buff,
@@ -514,7 +514,7 @@ wxArrayString wxOdbcDatabase::GetViews()
     memset(buff, 0, 8192*sizeof(SQLTCHAR));
 
     SQLINTEGER  col_size         = 8192;
-    SQLINTEGER  real_size        = 0;
+    SQLLEN  real_size        = 0;
     int nField = 3;
 
     SQLRETURN nGetDataReturn = m_pInterface->GetSQLGetData()( pStatement, nField, SQL_C_CHAR, buff,
@@ -565,7 +565,7 @@ wxArrayString wxOdbcDatabase::GetColumns(const wxString& table)
     memset(buff, 0, 8192*sizeof(SQLTCHAR));
 
     SQLINTEGER  col_size         = 8192;
-    SQLINTEGER  real_size        = 0;
+    SQLLEN  real_size        = 0;
     int nField = 4;
 
     SQLRETURN nGetDataReturn = m_pInterface->GetSQLGetData()( pStatement, nField, SQL_C_CHAR, buff,
@@ -617,7 +617,7 @@ wxArrayString wxOdbcDatabase::GetPKColumns(const wxString& table)
     memset(buff, 0, 8192*sizeof(SQLTCHAR));
 
     SQLINTEGER  col_size         = 8192;
-    SQLINTEGER  real_size        = 0;
+    SQLLEN  real_size        = 0;
     int nField = 4;
 
     SQLRETURN nGetDataReturn = m_pInterface->GetSQLGetData()( pStatement, nField, SQL_C_CHAR, buff,

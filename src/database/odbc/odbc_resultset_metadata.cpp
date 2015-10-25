@@ -16,7 +16,7 @@ int wxOdbcResultSetMetaData::GetColumnType(int i)
   SQLTCHAR      col_name[8192];
   SQLSMALLINT   col_name_length;
   SQLSMALLINT   col_data_type;
-  SQLUINTEGER   col_size;
+  SQLULEN   col_size;
   SQLSMALLINT   col_decimal_digits;
   SQLSMALLINT   col_nullable;
 
@@ -77,7 +77,7 @@ int wxOdbcResultSetMetaData::GetColumnSize(int i)
   SQLTCHAR      col_name[8192];
   SQLSMALLINT   col_name_length;
   SQLSMALLINT   col_data_type;
-  SQLUINTEGER   col_size;
+  SQLULEN   col_size;
   SQLSMALLINT   col_decimal_digits;
   SQLSMALLINT   col_nullable;
 
@@ -99,7 +99,7 @@ wxString wxOdbcResultSetMetaData::GetColumnName(int i)
   SQLTCHAR      col_name[8192];
   SQLSMALLINT   col_name_length;
   SQLSMALLINT   col_data_type;
-  SQLUINTEGER   col_size;
+  SQLULEN   col_size;
   SQLSMALLINT   col_decimal_digits;
   SQLSMALLINT   col_nullable;
 

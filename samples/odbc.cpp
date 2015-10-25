@@ -4,7 +4,7 @@
     #include <wx/wx.h>
 #endif
  
-#include <wx/database/mysql/mysql_database.h>
+#include <wx/database/odbc/odbc_database.h>
 
 
 class wxDatabaseApp : public wxAppConsole
@@ -28,11 +28,12 @@ int wxDatabaseApp::OnRun()
     { 
         //Create table
         wxString createSql = "CREATE TABLE Names (ID INT PRIMARY KEY NOT NULL, Name VARCHAR(50) NOT NULL);";
-		wxString strServer = "127.0.0.1";
-		wxString strDatabase = "test";//set your database
-		wxString strUser = "root";
-		wxString  strPassword = "jesus";
-        pDatabase = new wxMysqlDatabase(strServer, strDatabase, strUser, strPassword);
+         
+        wxString dsn = "Driver={PostgreSQL Unicode};Server=127.0.0.1;Port=5432;Database=test;Uid=postgres;Pwd=jesus;" ; 
+        
+        pDatabase = new wxOdbcDatabase(); 
+        static_cast<wxOdbcDatabase*>(pDatabase)->Open(dsn); 
+        
         pDatabase->RunQuery(createSql);
         
         //insert into table

@@ -12,11 +12,11 @@ set (wxDATABASE_VERSION_MAJOR 1)
 set (wxDATABASE_VERSION_MINOR 0)
  
 #Set Options 
-option (ENABLE_MYSQL "Enable MariaDB and MYSQL Database" ON) 
-option (ENABLE_SQLITE "Enable SQLite3 Database" ON) 
-option (ENABLE_PGS "Enable PostGreSQL Database" ON) 
+option (ENABLE_MYSQL "Enable MariaDB and MYSQL Database" OFF) 
+option (ENABLE_SQLITE "Enable SQLite3 Database" OFF) 
+option (ENABLE_PGS "Enable PostGreSQL Database" OFF) 
 option (ENABLE_TDS "Enable MSSQL Access with TDS Database" OFF) 
-option (ENABLE_ODBC "Enable ODBC Access" OFF) 
+option (ENABLE_ODBC "Enable ODBC Access" ON) 
 option (BUILD_SAMPLE "Build Sample Application" ON) 
 #Build type
 set(CMAKE_BUILD_TYPE Debug)
@@ -75,6 +75,25 @@ if (ENABLE_MYSQL)
         add_definitions(-DwxUSE_DATABASE_MYSQL=1)
     endif(MYSQL_FOUND) 	
 endif (ENABLE_MYSQL) 
+
+
+#Support for ODBC?
+if (ENABLE_ODBC)   
+    find_package(ODBC REQUIRED)
+    if(ODBC_FOUND)
+        #add ODBC include.  
+        include_directories(${ODBC_INCLUDE_DIR})    
+        
+        #add wxDatabase ODBC Include and sources for compiling
+        INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/database/odbc)
+        
+        #append to main SRC
+        file(GLOB CORE_ODBC_SRC "src/database/odbc/*.cpp")
+        list(APPEND SOURCES ${CORE_ODBC_SRC})  	
+        #Tell CMake to Pass this variable_requires
+        add_definitions(-DwxUSE_DATABASE_ODBC=1)
+    endif(ODBC_FOUND) 	
+endif (ENABLE_ODBC) 
 
 #Support for SQLite3?
 if (ENABLE_SQLITE)
@@ -140,7 +159,7 @@ add_definitions(-DWXMAKINGDLL_DATABASE) #WXMAKINGLIB_DATABASE
 #Compile library
 LINK_DIRECTORIES(${LINKER_DIRS})
 add_library(${LIB_OUTPUT_NAME} SHARED ${SOURCES}) 
-target_link_libraries(${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES} ${MYSQL_CLIENT_LIBS} ${PostgreSQL_LIBRARIES} ${SQLITE3_LIBRARIES} ) 
+target_link_libraries(${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES} ${MYSQL_CLIENT_LIBS} ${PostgreSQL_LIBRARIES} ${SQLITE3_LIBRARIES} ${ODBC_LIBRARIES}) 
 
 
 if(BUILD_SAMPLE) #build Samples
@@ -161,11 +180,30 @@ if(BUILD_SAMPLE) #build Samples
 		link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
 		target_link_libraries(wxDatabaseApp_PGS ${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES}) 
 	endif(ENABLE_PGS)
+    
+	if(ENABLE_ODBC)
+		add_executable(wxDatabaseApp_ODBC ${CMAKE_CURRENT_SOURCE_DIR}/samples/odbc.cpp)
+		link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
+		target_link_libraries(wxDatabaseApp_ODBC ${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES}) 
+	endif(ENABLE_ODBC)
 	
 endif(BUILD_SAMPLE) 
 
 #Install 
 install (DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
-install (TARGETS wxDatabaseApp_MySQL RUNTIME DESTINATION samples)
-install (TARGETS wxDatabaseApp_SQLite3 RUNTIME DESTINATION samples)
 install (TARGETS ${LIB_OUTPUT_NAME} ARCHIVE DESTINATION lib  LIBRARY DESTINATION lib  COMPONENT library)
+if(ENABLE_MYSQL)
+    install (TARGETS wxDatabaseApp_MySQL RUNTIME DESTINATION samples )
+endif(ENABLE_MYSQL)
+
+if(ENABLE_SQLITE)
+    install (TARGETS wxDatabaseApp_SQLite3 RUNTIME DESTINATION samples)
+endif(ENABLE_SQLITE)
+
+if(ENABLE_PGS)
+    install (TARGETS wxDatabaseApp_PGS RUNTIME DESTINATION samples)
+endif(ENABLE_PGS)
+
+if(ENABLE_ODBC)
+    install (TARGETS wxDatabaseApp_ODBC RUNTIME DESTINATION samples)
+endif(ENABLE_ODBC)

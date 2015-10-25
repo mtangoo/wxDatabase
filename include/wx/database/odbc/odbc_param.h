@@ -37,7 +37,7 @@ public:
   SQLSMALLINT GetDecimalDigits();
   SQLUINTEGER GetColumnSize();
 
-  SQLINTEGER* GetParameterLengthPtr(); // ???
+  SQLLEN* GetParameterLengthPtr(); // ???
 
   bool IsBinary();
 
