@@ -140,7 +140,7 @@ wxDateTime wxPostgresResultSet::GetResultDate(int nField)
     if (m_pInterface->GetPQgetisnull()(m_pResult, m_nCurrentRow, nField-1) != 1)
     {
       wxString strDateValue = ConvertFromUnicodeStream(m_pInterface->GetPQgetvalue()(m_pResult, m_nCurrentRow, nField-1));
-      if (dateValue.ParseDateTime(strDateValue))
+      if (! dateValue.ParseDateTime(strDateValue))
       {
         if (dateValue.ParseDate(strDateValue) )
         {
@@ -161,7 +161,7 @@ wxDateTime wxPostgresResultSet::GetResultDate(int nField)
     if (m_pInterface->GetPQgetisnull()(m_pResult, m_nCurrentRow, nField-1) != 1)
     {
       wxString strDateValue = ConvertFromUnicodeStream(m_pInterface->GetPQgetvalue()(m_pResult, m_nCurrentRow, nField-1));
-      if (dateValue.ParseDateTime(strDateValue))
+      if (! dateValue.ParseDateTime(strDateValue))
       {
         if (dateValue.ParseDate(strDateValue))
         {
