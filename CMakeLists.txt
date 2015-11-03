@@ -14,9 +14,9 @@ set (wxDATABASE_VERSION_MINOR 0)
 #Set Options 
 option (ENABLE_MYSQL "Enable MariaDB and MYSQL Database" OFF) 
 option (ENABLE_SQLITE "Enable SQLite3 Database" OFF) 
-option (ENABLE_PGS "Enable PostGreSQL Database" OFF) 
+option (ENABLE_PGS "Enable PostGreSQL Database" ON) 
 option (ENABLE_TDS "Enable MSSQL Access with TDS Database" OFF) 
-option (ENABLE_ODBC "Enable ODBC Access" ON) 
+option (ENABLE_ODBC "Enable ODBC Access" OFF) 
 option (BUILD_SAMPLE "Build Sample Application" ON) 
 #Build type
 set(CMAKE_BUILD_TYPE Debug)
