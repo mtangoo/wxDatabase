@@ -1,5 +1,5 @@
 ## About the Library 
-wxDatabase is built on the excellent work of Joseph Blough called DatabaseLayer.  You can read its story on history file.
+wxDatabase is built on the excellent work of Joseph Blough called DatabaseLayer.  You can read its story on [history file](HISTORY.md).
 
  The wxDatabase classes provide a database independent interface similar to JDBC (but only VERY basic functionality). So far, the only database backends supported are SQLite3, MySQL, PostGreSQL, ODBC, and TDS. Other Backends may be supported but they are not tested. We welcome you to help us testing them.
  
@@ -71,8 +71,19 @@ SQLite3 comes with wxDatabase distribution. This is the recommended way of bundl
 8. Run (Optional) install command (e.g. `mingw32-make install`) to install the headers and library to prefix.
 
 ## EXAMPLES
-See the samples folder for demonstration on how to use wxDatabase library.
+See the [samples](samples/) folder for demonstration on how to use wxDatabase library.
 
-## LICENSE
+## Building Documentation
+wxDatabase documentation is built with [Doxygen](http://doxygen.org). Download the latest version and follow the procedure in the next paragraph to build API documentation. You can view documentation on line at [mtangoo.github.io](http://mtangoo.github.io).
+
+To build documentation, change your directory to docs subdirectory. Then Issue `doxygen DoxyFile` command fro terminal/CMD. if successful, it will generate the "html" subdirectory that contains html files for documentation.
+
+## The wxDatabase Team
+wxDatabase is community driven and have a number of contributors. The following list includes only collaborators. Once we have a list of contributors, we will have special file for acknowledging them.
+- Stefano Mtangoo (@mtangoo)
+- Andrew (@manyleaves)
+- Patrick Geltinger (@patlkli)
+
+## wxDatabase LICENCE
 wxDatabase Library is released under wxWidgets License. If you want to give us credit, point URL to http://hosannahighertech.co.tz but its not mandatory.
 If you have any question that cannot be asked in wxWidgets forum or mailing list or its personal, contact me at support<(a.t)>hosannahighertech.co.tz
