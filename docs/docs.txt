@@ -1,0 +1,220 @@
+// This is an additional doxygen documentation page
+// To get access to the entire documentation of this
+// component, you should run 'doxygen' in this folder
+
+
+/*! 
+
+\mainpage 
+
+<center><em>JDBC-like database access for wxWidgets</em></center>
+
+This is the reference guide for DatabaseLayer component.
+The DatabaseLayer classes provide a database independent interface similar to JDBC (but only VERY basic functionality). So far, the only database backends supported are SQLite3, Firebird, MySQL, PostgreSQL, and ODBC.  Although the C++ interface can be common between database, it should be noted that the SQL understood by the different database backends may vary.
+
+Currently there is not a full tutorial but the usage of DatabaseLayer classes is pretty easy; just take a look
+at the \ref sample page to get an idea.  A summary of the DatabaseLayer functionality can be found on the \ref summary page.
+
+To build DatabaseLayer and integrate it in your program, look at the \ref compiling page.  Integrating the MySQL backend into your application may require licensing your application under the GPL license (or a separate MySQL commercial license).  All other DatabaseLayer backend code is licensed under the wxWidgets license.
+
+*/
+
+/*!
+
+\page sample DatabaseLayer sample
+
+This is the unit test source file for DatabaseLayer.
+\include databaselayer_tests.cpp
+
+*/
+
+/*!
+
+\page summary Functionality Summary
+
+This is a summary of the DatabaseLayer functionality
+
+<b>Initializing the database layer</b><br>
+SQLite:<br>
+<code>
+&nbsp;DatabaseLayer* pDatabase = new SqliteDatabaseLayer(_("mydb.db"));<br>
+</code>
+Firebird:<br>
+<code>
+&nbsp;DatabaseLayer* pDatabase = new FirebirdDatabaseLayer(_("mydb.db"));<br>
+</code>
+<p>
+<b>Inserting data</b><br>
+<code>
+pDatabase-&gt;RunQuery(_("INSERT INTO table1 (column1, column2) VALUES ('One', 'Two')"));<br>
+</code>
+<p>
+<b>Inserting data with a prepared statement</b><br>
+<code>
+PreparedStatement* pStatement = pDatabase-&gt;PrepareStatement(_("INSERT INTO table1 (column1, column2) VALUES (?, ?)"));<br>
+if (pStatement)<br>
+{<br>
+  &nbsp;pStatement-&gt;SetParamString(1, _("One"));<br>
+  &nbsp;pStatement-&gt;SetParamString(2, _("Two"));<br>
+  &nbsp;pStatement-&gt;RunQuery():<br>
+  &nbsp;pDatabase-&gt;CloseStatement(pStatement);<br>
+}<br>
+</code>
+<p>
+<b>Retrieving data</b><br>
+<code>
+DatabaseResultSet* pResults = pDatabaseLayer-&gt;RunQueryWithResults(_("SELECT * FROM table1"));<br>
+if (pResults)<br>
+{<br>
+  &nbsp;while (pResults-&gt;Next())<br>
+  &nbsp;{<br>
+    &nbsp;&nbsp;wxString strOne = pResults-&gt;GetResultString(_("column1"));<br>
+    &nbsp;&nbsp;wxString strTwo = pResults-&gt;GetResultString(_("column2"));<br>
+    &nbsp;&nbsp;wxString strTwo = pResults-&gt;GetResultString(1);<br>
+  &nbsp;}<br>
+  &nbsp;pDatabase-&gt;CloseResultSet(pResults);<br>
+}<br>
+</code>
+<p>
+<b>Retrieving data with a prepared statement</b><br>
+<code>
+PreparedStatement* pStatement = pDatabase-&gt;PrepareStatement(_("SELECT * FROM table1 WHERE column1 - ?)"));<br>
+if (pStatement)<br>
+{<br>
+  &nbsp;pStatement-&gt;SetParamString(1, _("One"));<br>
+  &nbsp;DatabaseResultSet* pResults = pStatement-&gt;RunQueryWithResults():<br>
+  &nbsp;if (pResults)<br>
+  &nbsp;{<br>
+    &nbsp;&nbsp;while (pResults-&gt;Next())<br>
+    &nbsp;&nbsp;{<br>
+      &nbsp;&nbsp;&nbsp;wxString strOne = pResults-&gt;GetResultString(_("column1"));<br>
+      &nbsp;&nbsp;&nbsp;wxString strTwo = pResults-&gt;GetResultString(_("column2"));<br>
+    &nbsp;&nbsp;}<br>
+    &nbsp;&nbsp;pDatabase-&gt;CloseResultSet(pResults);<br>
+  &nbsp;}<br>
+  &nbsp;pDatabase-&gt;CloseStatement(pStatement);<br>
+}<br>
+</code>
+<p>
+<b>Transactions</b> - (If the database backend doesn't support transactions, then these won't do anything)<br>
+Start the transaction<br>
+<code>
+&nbsp;pDatabase-&gt;BeginTransaction();<br>
+</code>
+Commit the transaction<br>
+<code>
+&nbsp;pDatabase-&gt;Commit();<br>
+</code>
+Rollback the transaction<br>
+<code>
+&nbsp;pDatabase-&gt;RollBack();<br>
+</code>
+<p>
+<b>Perl DBD style Prepared Statement usage:</b><br>
+<code>
+PreparedStatement* pStatement = pDatabase-&gt;prepare('INSERT INTO table1 (column1) VALUES (?)');<br>
+for (unsigned int i=0; i&lt;array.size(); i++)<br>
+{<br>
+  &nbsp;pStatement-&gt;SetParamString(1, array[i]);<br>
+  &nbsp;pStatement-&gt;RunQuery();<br>
+}<br>
+pDatabase-&gt;CloseStatement(pStatement);
+</code>
+<p>
+<b>Shutting down a database connection</b><br>
+<code>
+pDatabase-&gt;Close();<br>
+</code>
+<p>
+<p>
+<b>Exception Handling:</b><br>
+DatabaseLayer methods can throw exceptions of type DatabaseLayerException<br>
+<code>
+try<br>
+{<br>
+  &nbsp;...<br>
+}<br>
+catch (DatabaseLayerException& e)<br>
+{<br>
+  &nbsp;wxLogError(wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str()));<br>
+}<br>
+</code>
+
+*/
+
+/*!
+
+\page compiling Compiling DatabaseLayer
+
+Compiling the DatabaseLayer source results in a database specific lib file which your
+project can link to.  The name of the static library is in the form libdatabaselayer_<databasebackend>.a
+on Linux and databaselayer_<databasebackend>.lib on Windows.  An example would be libdatabaselayer_firebird.a
+and databaselayer_firebird.lib as the static libraries generated for the firebird database.
+Using third party wrapper was avoided so you should only need to link to the native database
+libraries provided with your selected database (see list below)
+The "databaselayer/include" directory must be in your project's include 
+path.
+
+\section headers DatabaseLayer needs the path to the following database-specific header files for each backend that you'd like to compile:
+<dl>
+  <dt>PostgreSQL</dt>
+  <dd>libpq-fe.h</dd>
+  <dt>Firebird</dt>
+  <dd>ibase.h</dd>
+  <dt>MySQL</dt>
+  <dd>mysql.h</dd>
+  <dt>ODBC</dt>
+  <dd>sql.h</dd>
+</dl>
+
+\section targets DatabaseLayer contains the following compile targets:
+<ul>
+  <li>PostgreSQL</li>
+  <li>Firebird</li>
+  <li>MySQL</li>
+  <li>ODBC</li>
+  <li>databaselayer - includes SQLite, PostgreSQL, Firebird, and ODBC</li>
+  <li>databaselayer_gpl - includes SQLite, PostgreSQL, MySQL, Firebird, and ODBC</li>
+</ul>
+
+
+\section win32 How to compile DatabaseLayer on win32
+
+To build a library from DatabaseLayer sources, you can use the makefiles or project files in the BUILD folder.
+
+<dl>
+<dt>MSVC compiler (2 options):</dt>
+<dd>Use the VC6 project files</dd><br>
+<dd>nmake -f makefile.vc</dd>
+
+<dt>Mingw compiler: </dt>
+<dd>mingw32-make -f makefile.gcc</dd>
+
+<dt>Dev-Cpp: </dt>
+<dd>Import VC6 project files (detailed instructions can be found <a href="http://wxcode.sourceforge.net/docs/databaselayer/devcpp.html">here</a>)</dd>
+</dl>
+
+<dl>
+<dt>If you have linking errors with the Mingw/Dev-Cpp, try the following steps.</dt>
+<dd>Make sure that the functions listed in the link errors are in the database library's def file (i.e. libmysql.def)</dd><br>
+<dd>Generate a mingw-compatible linking library using mingw's dlltool command (i.e. dlltool --input-def libX.def --dllname libX.dll --output-lib libX.a - k)</dd><br>
+<dd>Link your project to the newly generated libX.a file</dd>
+</dl>
+
+
+\section unix How to compile DatabaseLayer on Unix-based OS
+
+On Unix-based operating systems, explode the tar.gz archive and type:
+
+<tt>
+cd databaselayer/build
+            
+make -f GNUmakefile (sqlite|postgresql|mysql|firebird|odbc|databaselayer|databaselayer_gpl)
+                    
+</tt>
+
+
+<br/><br/>
+
+
+*/
