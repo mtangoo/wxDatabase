@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>wxDatabase Home by mtangoo</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">wxDatabase Home</h1>
+        <p class="header">A C++ Database Library for wxWidgets</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/mtangoo/wxDatabase/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/mtangoo/wxDatabase/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/mtangoo/wxDatabase">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/mtangoo">mtangoo</a></p>
+
+
+      </header>
+      <section>
+        <h2>
+<a id="a-c-database-library-for-wxwidgets" class="anchor" href="#a-c-database-library-for-wxwidgets" aria-hidden="true"><span class="octicon octicon-link"></span></a>A C++ Database Library for wxWidgets</h2>
+
+<p>The wxDatabase classes provide a database independent interface similar to JDBC (but only VERY basic functionality). So far, the only database backends supported are SQLite3, MySQL, PostGreSQL, ODBC, and TDS. Other Backends may be supported but they are not tested. We welcome you to help us testing them.</p>
+
+<p>Of course the no brainer part: Have a database server running ;) </p>
+
+<p>Although the C++ interface can be common between database, it should be noted that the SQL understood by the different database backends may vary.</p>
+
+<p>The main interfaces of the component are:</p>
+
+<ul>
+<li>wxDatabase</li>
+<li>wxPreparedStatement </li>
+<li>wxDatabaseResultSet</li>
+</ul>
+
+<p><strong>Prerequites</strong>:
+wxDatabase is a library that add databae support to wxWidgets. So you will need wxWidgets build. wxDatabases works with any wx29 series but you will save yourself a lot of pain by using 3.x instead as we test against that version.</p>
+
+<p><strong>BUILDING</strong>
+To build wxDatabase, you need to have the database development files for the database you want to connect (that is headers and library). </p>
+
+<h2>
+<a id="using-odbc" class="anchor" href="#using-odbc" aria-hidden="true"><span class="octicon octicon-link"></span></a>USING ODBC</h2>
+
+<p>To Succesful compile with ODBC you need header and libs for your ODBC driver installed. Here are some places to download the files necessary for ODBC</p>
+
+<p><strong>WINDOWS</strong></p>
+
+<ul>
+<li>
+<a href="http://www.postgresql.org/ftp/odbc/versions/msi/">PostGreSQL</a> </li>
+<li><a href="http://dev.mysql.com/downloads/connector/odbc/">MySQL</a></li>
+<li><a href="http://www.freetds.org/">Free TDS</a></li>
+<li><a href="https://downloads.mariadb.org/connector-odbc/">MariaDB</a></li>
+<li><a href="http://www.ch-werner.de/sqliteodbc/">SQLite3</a></li>
+</ul>
+
+<p><strong>LINUX</strong></p>
+
+<p>Since Linux have so many distros, I will use Ubuntu (on which I do my development works) as example. It should not be too hard to make your favorite distro work.</p>
+
+<p>First install the ODBC Manager. The Library is tested again <a href="http://www.unixodbc.org/">UnixODBC</a> but any other manager should work fine. To install UnixODBC in Ubuntu run <code>sudo apt-get install unixodbc-dev</code> </p>
+
+<p>Then install the driver of your choice</p>
+
+<ul>
+<li>PostGreSQL <code>sudo apt-get install odbc-postgresql</code>
+</li>
+<li>MySQL/MariaDB <code>sudo apt-get install libmyodbc</code>
+</li>
+<li>SQLite3 <code>sudo apt-get install libsqliteodbc</code>
+</li>
+<li>FreeTDS <code>sudo apt-get install freetds</code> </li>
+</ul>
+
+<h2>
+<a id="native-libraries" class="anchor" href="#native-libraries" aria-hidden="true"><span class="octicon octicon-link"></span></a>NATIVE LIBRARIES</h2>
+
+<h3>
+<a id="windows" class="anchor" href="#windows" aria-hidden="true"><span class="octicon octicon-link"></span></a>WINDOWS</h3>
+
+<p>In Windows, you just need to get development libraries and headers to compile wxDatabase. Here are places you can download the development files:</p>
+
+<ol>
+<li><a href="https://dev.mysql.com/downloads/connector/c/">MYSQL</a></li>
+<li><a href="http://www.enterprisedb.com/products-services-training/pgdownload#windows">PostGreSQL</a></li>
+<li><a href="http://www.freetds.org/">Free TDS</a></li>
+<li><a href="https://downloads.mariadb.org/connector-c/">MariaDB</a></li>
+</ol>
+
+<h3>
+<a id="linux" class="anchor" href="#linux" aria-hidden="true"><span class="octicon octicon-link"></span></a>LINUX</h3>
+
+<ul>
+<li>PostGreSQL <code>sudo apt-get install postgresql-server-dev-9.4</code>
+</li>
+<li>MySQL/MariaDB <code>sudo apt-get install libmysqlclient-dev</code> (check <a href="http://dev.mysql.com/downloads/repo/apt/">MySQL</a> and <a href="https://downloads.mariadb.org/mariadb/repositories/#mirror=webafrica&amp;distro=Ubuntu">MariaDB</a> articles on how to setup repositories)</li>
+<li>SQLite3 <code>sudo apt-get install libsqlite3-dev</code>
+</li>
+<li>FreeTDS <code>sudo apt-get install freetds-dev</code> </li>
+</ul>
+
+<p><strong>A NOTE ON SQLite3</strong></p>
+
+<p>SQLite3 comes with wxDatabase distribution. This is the recommended way of bundling the library. However you can use installed SQLite3 library and it should work just fine. However its currently untested and would like to hear from those using the alternative.</p>
+
+<h2>
+<a id="building" class="anchor" href="#building" aria-hidden="true"><span class="octicon octicon-link"></span></a>BUILDING</h2>
+
+<ol>
+<li>Install your compiler tool-set (Library is tested against GCC/MinGW. So reports on other compilers are welcome). Make sure your tool-set bin paths are added to system path.</li>
+<li>Install CMake and make sure its added to system path</li>
+<li>Change CMakeList.txt to enable/disable libraries as you want</li>
+<li>Compile wxWidgets and add the WXWIN environment variable pointing to root folder of wxWidgets to your System environment variables</li>
+<li>CD to wxDatabase/build on your terminal/CMD window</li>
+<li>Run CMake command to generate your Makefiles (e.g.<code>cmake Verbose=1 -G "MinGW Makefiles" ..</code>). </li>
+<li>Run compiler (e.g. <code>mingw32-make</code>). If the build finishes successfully the library and samples should be in build directory</li>
+<li>Run (Optional) install command (e.g. <code>mingw32-make install</code>) to install the headers and library to prefix.</li>
+</ol>
+
+<h2>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>EXAMPLES</h2>
+
+<p>See the <a href="samples/">samples</a> folder for demonstration on how to use wxDatabase library.</p>
+
+<h2>
+<a id="building-documentation" class="anchor" href="#building-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building Documentation</h2>
+
+<p>wxDatabase documentation is built with <a href="http://doxygen.org">Doxygen</a>. Download the latest version and follow the procedure in the next paragraph to build API documentation. You can view documentation on line at <a href="http://mtangoo.github.io">mtangoo.github.io</a>.</p>
+
+<p>To build documentation, change your directory to docs subdirectory. Then Issue <code>doxygen DoxyFile</code> command fro terminal/CMD. if successful, it will generate the "html" subdirectory that contains html files for documentation.</p>
+
+<h2>
+<a id="the-wxdatabase-team" class="anchor" href="#the-wxdatabase-team" aria-hidden="true"><span class="octicon octicon-link"></span></a>The wxDatabase Team</h2>
+
+<p>wxDatabase is community driven and have a number of contributors. The following list includes only collaborators. Once we have a list of contributors, we will have special file for acknowledging them.</p>
+
+<ul>
+<li>Stefano Mtangoo (<a href="https://github.com/mtangoo" class="user-mention">@mtangoo</a>)</li>
+<li>Andrew (<a href="https://github.com/manyleaves" class="user-mention">@manyleaves</a>)</li>
+<li>Patrick Geltinger (<a href="https://github.com/patlkli" class="user-mention">@patlkli</a>)</li>
+</ul>
+
+<h2>
+<a id="wxdatabase-licence" class="anchor" href="#wxdatabase-licence" aria-hidden="true"><span class="octicon octicon-link"></span></a>wxDatabase LICENCE</h2>
+
+<p>wxDatabase Library is released under wxWidgets License. If you want to give us credit, point URL to <a href="http://hosannahighertech.co.tz">http://hosannahighertech.co.tz</a> but its not mandatory.
+If you have any question that cannot be asked in wxWidgets forum or mailing list or its personal, contact me at support&lt;(a.t)&gt;hosannahighertech.co.tz</p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
