@@ -1,2 +1,4 @@
-build/* 
-
+.codelite/*
+build/*
+cmake-build-Debug/
+cmake-build-Release/
