@@ -997,7 +997,7 @@ wxDatabase* wxDatabase::GetSqliteDatabase(wxConfigBase& config, wxString* err)
 		return NULL;
 	}
 
-	wxSqliteDatabase* pDatabase = new wxSqliteDatabase(database);
+	wxSqliteDatabase* pDatabase = new wxSqliteDatabase(database, true);
 
 	wxString libraryPath;
 	if (config.Read("library_path", &libraryPath))
@@ -1035,17 +1035,17 @@ wxDatabase* wxDatabase::GetPostgresDatabase(wxConfigBase& config, wxString* err)
 	wxString server;
 	wxString user;
 	wxString password;
-	int nPort;
+	int port;
 
 	bool haveServerInfo = config.Read("server", &server, wxEmptyString);
 	bool haveUserInfo = config.Read("user", &user, wxEmptyString);
 	config.Read("password", &password, wxEmptyString);
-	config.Read("port", &nPort, 5432);
+	config.Read("port", &port, 5432);
 
 	wxPostgresDatabase* pDatabase;
 
 	if (haveServerInfo && haveUserInfo)
-		pDatabase = new wxPostgresDatabase(server, nPort, database, user, password);
+		pDatabase = new wxPostgresDatabase(server, port, database, user, password);
 	else if (haveServerInfo && !haveUserInfo)
 		pDatabase = new wxPostgresDatabase(server, database);
 	else if (haveUserInfo && !haveServerInfo)
@@ -1063,7 +1063,7 @@ wxDatabase* wxDatabase::GetPostgresDatabase(wxConfigBase& config, wxString* err)
 }
 #endif
 
- #if wxUSE_DATABASE_MYSQL
+#if wxUSE_DATABASE_MYSQL
 wxDatabase* wxDatabase::GetMysqlDatabase(wxConfigBase& config, wxString* err)
 {
 	if (!config.HasGroup("MySQL"))
@@ -1188,6 +1188,11 @@ wxDatabase* wxDatabase::GetTdsDatabase(wxConfigBase& config, wxString* err)
 	}
 	config.SetPath("TDS");
 
+	wxString freetds;
+	if (!config.Read("freetds", &freetds))
+	{
+		if (err) err->Append("/TDS/freetds not defined. Defaulting to environment variable FREETDS");
+	}
 	wxString server;
 	if (!config.Read("server", &server))
 	{
@@ -1203,20 +1208,18 @@ wxDatabase* wxDatabase::GetTdsDatabase(wxConfigBase& config, wxString* err)
 	wxString user;
 	if (!config.Read("user", &user))
 	{
-		if (err) err->Append("/TDS/user not defined");
-		return NULL;
+		if (err) err->Append("/TDS/user not defined. Defaulting to n\"\"");
 	}
 	wxString password;
 	if (!config.Read("password", &password))
 	{
-		if (err) err->Append("/TDS/password not defined");
-		return NULL;
+		if (err) err->Append("/TDS/password not defined. Defaulting to n\"\"");
 	}
 	wxString version;
-	int tdsVersion = wxTdsDatabase::TDS_80;
+	int tdsVersion = wxTdsDatabase::TDS_72;
 	if (!config.Read("version", &version))
 	{
-		if (err) err->Append("/TDS/version not defined. Defaulting to 8.0");
+		if (err) err->Append("/TDS/version not defined. Defaulting to 7.2");
 	}
 	else
 	{
@@ -1232,11 +1235,15 @@ wxDatabase* wxDatabase::GetTdsDatabase(wxConfigBase& config, wxString* err)
 			tdsVersion = wxTdsDatabase::TDS_71;
 		else if (version == "7.2")
 			tdsVersion = wxTdsDatabase::TDS_72;
+		else if (version == "7.3")
+			tdsVersion = wxTdsDatabase::TDS_73;
+		else if (version == "7.4")
+			tdsVersion = wxTdsDatabase::TDS_74;
 		else if (version == "8.0")
 			tdsVersion = wxTdsDatabase::TDS_80;
 	}
 
-	wxTdsDatabase* pDatabase = new wxTdsDatabase(server, database, user, password, tdsVersion);
+	wxTdsDatabase* pDatabase = new wxTdsDatabase(freetds, server, database, user, password, tdsVersion);
 
 	wxString libraryPath;
 	if (config.Read("library_path", &libraryPath))
@@ -1247,6 +1254,5 @@ wxDatabase* wxDatabase::GetTdsDatabase(wxConfigBase& config, wxString* err)
 	return pDatabase; 
 }
 #endif
- 
 
 //AML end

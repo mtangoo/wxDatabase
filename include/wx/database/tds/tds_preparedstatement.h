@@ -9,7 +9,7 @@ class wxTdsPreparedStatement : public wxPreparedStatement
 {
 public:
 	// ctor
-	wxTdsPreparedStatement(TDSSOCKET* pDatabase, const wxString& strQuery/*AML start*/, int nTdsVersion/*AML end*/);
+	wxTdsPreparedStatement(TDSSOCKET* pDatabase, TDSDYNAMIC* pStatement, const wxString& strQuery);
 
 	// dtor
 	virtual ~wxTdsPreparedStatement();
@@ -37,11 +37,7 @@ private:
 
 	TDSSOCKET* m_pDatabase;
 	TDSDYNAMIC* m_pStatement;
-	TDSPARAMINFO* m_pParameters;
 	wxString m_strOriginalQuery;
-	//AML start
-	int m_nTdsVersion;
-	//AML end
 };
 
 #endif//_WX_DATABASE_TDS_PREPARED_STATEMENT_H_

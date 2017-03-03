@@ -5,7 +5,7 @@
 #define	_WINSOCKAPI_
 #endif
 
-#include <wx/wx.h>
+#include "wx/wxprec.h"
 
 #if defined(_DEBUG) && defined(_MSC_VER)
     #include <crtdbg.h>
@@ -71,7 +71,7 @@
 	#include "wx/database/mysql/mysql_preparedstatement.h"
 	#include "wx/database/mysql/mysql_preparedstatement_parameter.h"
 	#include "wx/database/mysql/mysql_preparedstatement_parameter_collection.h"
-	#include "wx/database/mysql/mysql_preparedStatement_resultset.h"
+	#include "wx/database/mysql/mysql_preparedstatement_resultset.h"
 	#include "wx/database/mysql/mysql_preparedstatement_wrapper.h"
 	#include "wx/database/mysql/mysql_resultset_metadata.h"
 #endif
@@ -86,11 +86,8 @@
 	#include "wx/database/odbc/odbc_resultset_metadata.h" 
 #endif
 #if wxUSE_DATABASE_TDS
-	#ifndef	_FREETDS_LIBRARY_SOURCE
-	#define	_FREETDS_LIBRARY_SOURCE
-	#endif
-	#include <tds.h>
-	#include <tdsconvert.h>
+	#include <freetds/tds.h>
+	#include <freetds/convert.h>
 	#include "wx/database/tds/tds_columndata.h"
 	#include "wx/database/tds/tds_database.h"
 	#include "wx/database/tds/tds_preparedstatement.h"

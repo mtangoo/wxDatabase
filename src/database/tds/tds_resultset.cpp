@@ -39,7 +39,7 @@ void wxTdsResultSet::FreeResultSets()
 	int rc;
 	int result_type;
 	//while ((rc = tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_TOKEN_RESULTS)) == TDS_SUCCEED)
-	while ((rc = tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_RETURN_ROW|TDS_TOKEN_RESULTS|TDS_RETURN_COMPUTE)) == TDS_SUCCEED)
+	while ((rc = tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_RETURN_ROW|TDS_TOKEN_RESULTS|TDS_RETURN_COMPUTE)) == /*AML TDS_SUCCEED*/TDS_SUCCESS)
 	// while ((rc = tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_TOKEN_RESULTS|TDS_RETURN_ROWFMT|TDS_RETURN_ROW|TDS_RETURN_COMPUTE)) == TDS_SUCCEED)
   {
 	switch (result_type)
@@ -60,7 +60,7 @@ void wxTdsResultSet::FreeResultSets()
 			  if (m_pDatabase->current_results && m_pDatabase->current_results->num_cols > 0)
 			  {
 					  fprintf(stderr, "Info:  wxTdsResultSet processing tokens\n");
-  					while (tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_RETURN_ROWFMT|TDS_RETURN_DONE|TDS_RETURN_ROW) == TDS_SUCCEED)
+  					while (tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_RETURN_ROWFMT|TDS_RETURN_DONE|TDS_RETURN_ROW) == /*AML TDS_SUCCEED*/TDS_SUCCESS)
 				{
 		  			  //fprintf(stderr, "Warning:  wxTdsResultSet TDS_ROW_RESULT query should not return results.  Type: %d\n", result_type);
 						if (result_type != TDS_ROW_RESULT)
@@ -117,7 +117,7 @@ bool wxTdsResultSet::Next()
   int nReturn = tds_process_tokens(m_pDatabase, &nResultType, NULL, TDS_RETURN_ROWFMT|TDS_RETURN_ROW|TDS_RETURN_COMPUTE);
 
   //fprintf(stderr, "Result type: %d, Looking for %d\n", nResultType, TDS_ROWFMT_RESULT);
-  if (nReturn == TDS_SUCCEED && nResultType == TDS_ROWFMT_RESULT)
+  if (nReturn == /*AML TDS_SUCCEED*/TDS_SUCCESS && nResultType == TDS_ROWFMT_RESULT)
   {
     PopulateFieldMap();
     CreateResultSetMetaData();
@@ -126,7 +126,7 @@ bool wxTdsResultSet::Next()
   }
 
   //fprintf(stderr, "tds_process_tokens returned %d (%d ?)\n", nReturn, TDS_SUCCEED);
-  return (nReturn == TDS_SUCCEED);
+  return (nReturn == /*AML TDS_SUCCEED*/TDS_SUCCESS);
 }
 
 void wxTdsResultSet::PopulateFieldMap()
@@ -141,9 +141,9 @@ void wxTdsResultSet::PopulateFieldMap()
       for (int i = 0; i < m_pResultInfo->num_cols; i++)
       {
         curcol = m_pResultInfo->columns[i];
-        char* pCharBuffer = new char[(curcol->column_namelen)+1];
-        memset(pCharBuffer, 0, (curcol->column_namelen)+1);
-        strncpy(pCharBuffer, curcol->column_name, curcol->column_namelen);
+        char* pCharBuffer = new char[(curcol->column_name/*AML len*/->dstr_size)+1];
+        memset(pCharBuffer, 0, (curcol->column_name/*AML len*/->dstr_size)+1);
+        strncpy(pCharBuffer, curcol->column_name->dstr_s, curcol->column_name/*AML len*/->dstr_size);
         wxString colName = ConvertFromUnicodeStream(pCharBuffer);
         wxDELETEA(pCharBuffer);
         //fprintf(stderr, "column name(%d) = '%s'\n", i, colName.c_str());
@@ -255,7 +255,7 @@ wxDateTime wxTdsResultSet::GetResultDate(int nField)
 
   wxDateTime date;
   date.Set(dateRec.day, wxDateTime::Month(dateRec.month), dateRec.year,
-    dateRec.hour, dateRec.minute, dateRec.second, dateRec.millisecond);
+    dateRec.hour, dateRec.minute, dateRec.second, dateRec./*AML millisecond*/decimicrosecond*10000);
 
   return date;
 }
@@ -369,7 +369,7 @@ wxResultSetMetaData* wxTdsResultSet::GetMetaData()
     int nResultType;
     int nReturn = tds_process_tokens(m_pDatabase, &nResultType, NULL, TDS_RETURN_ROWFMT);
 
-    if (nReturn == TDS_SUCCEED && nResultType == TDS_ROWFMT_RESULT)
+    if (nReturn == /*AML TDS_SUCCEED*/TDS_SUCCESS && nResultType == TDS_ROWFMT_RESULT)
     {
       PopulateFieldMap();
       CreateResultSetMetaData();
@@ -381,7 +381,7 @@ wxResultSetMetaData* wxTdsResultSet::GetMetaData()
 
 void wxTdsResultSet::SetErrorInformationFromDatabaseLayer()
 {
-  wxTdsDatabase* pDatabase = wxTdsDatabase::LookupTdsLayer(m_pDatabase->tds_ctx);
+  wxTdsDatabase* pDatabase = wxTdsDatabase::LookupTdsLayer(/*AML m_pDatabase->tds_ctx*/tds_get_ctx(m_pDatabase));
   if (pDatabase != NULL)
   {
     SetErrorCode(pDatabase->GetErrorCode());

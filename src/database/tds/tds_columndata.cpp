@@ -62,7 +62,8 @@ int wxTdsColumnData::GetColumnSize(TDSCOLUMN* pColumn)
 wxString wxTdsColumnData::GetColumnName(TDSCOLUMN* pColumn)
 {
 	// We might consider a version of ConvertFromUnicodeStream that excepts the string length parameter
-	wxString colName(/*AML (wxChar*)*/pColumn->column_name, pColumn->column_namelen);
+	//AML wxString colName(/*AML (wxChar*)*/pColumn->column_name, pColumn->column_namelen);
+	wxString colName(pColumn->column_name->dstr_s, pColumn->column_name->dstr_size);
 	return colName;
 }
 

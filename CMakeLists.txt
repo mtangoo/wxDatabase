@@ -14,9 +14,9 @@ set (wxDATABASE_VERSION_MINOR 0)
 #Set Options 
 option (ENABLE_MYSQL "Enable MariaDB and MYSQL Database" OFF) 
 option (ENABLE_SQLITE "Enable SQLite3 Database" OFF) 
-option (ENABLE_PGS "Enable PostGreSQL Database" ON) 
-option (ENABLE_TDS "Enable MSSQL Access with TDS Database" OFF) 
-option (ENABLE_ODBC "Enable ODBC Access" OFF) 
+option (ENABLE_PGS "Enable PostGreSQL Database" OFF) 
+option (ENABLE_TDS "Enable MSSQL Access with TDS Database" ON) 
+option (ENABLE_ODBC "Enable ODBC Access" ON) 
 option (BUILD_SAMPLE "Build Sample Application" ON) 
 #Build type
 set(CMAKE_BUILD_TYPE Debug)
@@ -75,7 +75,6 @@ if (ENABLE_MYSQL)
         add_definitions(-DwxUSE_DATABASE_MYSQL=1)
     endif(MYSQL_FOUND) 	
 endif (ENABLE_MYSQL) 
-
 
 #Support for ODBC?
 if (ENABLE_ODBC)   
@@ -153,58 +152,55 @@ if (ENABLE_PGS)
     endif(PostgreSQL_FOUND) 	
 endif (ENABLE_PGS)  
 
-#Preprocessors
-add_definitions(-DWXMAKINGDLL_DATABASE) #WXMAKINGLIB_DATABASE
-add_definitions(-DWXMAKINGDLL_MLBASE) #I get windows+MinGW error without this
+#Support for FreeTDS?
+if (ENABLE_TDS)   
+    find_package(FreeTDS REQUIRED)
+    if(FreeTDS_FOUND)
+        #add FreeTDS include.  
+        include_directories(${FreeTDS_INCLUDE_DIRS})    
+        
+        #add wxDatabase TDS include and sources for compiling
+        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/database/tds)
+        
+        #append to main SRC
+        file(GLOB CORE_TDS_SRC "src/database/tds/*.cpp")
+        list(APPEND SOURCES ${CORE_TDS_SRC})  	
+
+        #Tell CMake to Pass this variable_requires
+        add_definitions(-DwxUSE_DATABASE_TDS=1)
+    endif(FreeTDS_FOUND) 	
+endif (ENABLE_TDS)  
 
 #Compile library
 LINK_DIRECTORIES(${LINKER_DIRS})
 add_library(${LIB_OUTPUT_NAME} SHARED ${SOURCES}) 
-target_link_libraries(${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES} ${MYSQL_CLIENT_LIBS} ${PostgreSQL_LIBRARIES} ${SQLITE3_LIBRARIES} ${ODBC_LIBRARIES}) 
-
+target_link_libraries(${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES} ${MYSQL_CLIENT_LIBS} ${PostgreSQL_LIBRARIES} ${SQLITE3_LIBRARIES} ${ODBC_LIBRARIES} ${FreeTDS_LIBRARIES}) 
+target_compile_definitions(${LIB_OUTPUT_NAME} PRIVATE WXMAKINGDLL_DATABASE=1 WXMAKINGDLL_MLBASE=1)
 
 if(BUILD_SAMPLE) #build Samples
-	if(ENABLE_SQLITE)
-		add_executable (wxDatabaseApp_SQLite3 ${CMAKE_CURRENT_SOURCE_DIR}/samples/sqlite3.cpp)
-		link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
-		target_link_libraries(wxDatabaseApp_SQLite3 ${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES}) 
-	endif(ENABLE_SQLITE)
-	
-	if(ENABLE_MYSQL)
-		add_executable(wxDatabaseApp_MySQL ${CMAKE_CURRENT_SOURCE_DIR}/samples/mysql.cpp)
-		link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
-		target_link_libraries(wxDatabaseApp_MySQL ${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES}) 
-	endif(ENABLE_MYSQL)
-	
-	if(ENABLE_PGS)
-		add_executable(wxDatabaseApp_PGS ${CMAKE_CURRENT_SOURCE_DIR}/samples/postgres.cpp)
-		link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
-		target_link_libraries(wxDatabaseApp_PGS ${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES}) 
-	endif(ENABLE_PGS)
-    
-	if(ENABLE_ODBC)
-		add_executable(wxDatabaseApp_ODBC ${CMAKE_CURRENT_SOURCE_DIR}/samples/odbc.cpp)
-		link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
-		target_link_libraries(wxDatabaseApp_ODBC ${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES}) 
-	endif(ENABLE_ODBC)
-	
+	set(SAMPLE_CONF_FILENAME wxDatabaseApp.conf)
+	set(SAMPLE_CONF_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/samples/${SAMPLE_CONF_FILENAME})
+	set(SAMPLE_CONF_TARGET ${CMAKE_CURRENT_BINARY_DIR}/${SAMPLE_CONF_FILENAME})
+	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
+	add_executable(wxDatabaseApp ${CMAKE_CURRENT_SOURCE_DIR}/samples/wxDatabaseApp.cpp)
+	target_sources(wxDatabaseApp PUBLIC ${SAMPLE_CONF_SOURCE})
+	target_link_libraries(wxDatabaseApp ${LIB_OUTPUT_NAME} ${wxWidgets_LIBRARIES}) 
+	add_custom_command(
+			TARGET wxDatabaseApp POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy
+					${SAMPLE_CONF_SOURCE}
+					${SAMPLE_CONF_TARGET}
+	)
+	if(WIN32)
+		set_target_properties(wxDatabaseApp PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE /ENTRY:wxDatabaseApp::OnRun")
+		set_target_properties(wxDatabaseApp PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE /ENTRY:wxDatabaseApp::OnRun")
+	endif(WIN32)
 endif(BUILD_SAMPLE) 
 
 #Install 
 install (DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
 install (TARGETS ${LIB_OUTPUT_NAME} ARCHIVE DESTINATION lib  LIBRARY DESTINATION lib  RUNTIME DESTINATION lib COMPONENT library)
-if(ENABLE_MYSQL)
-    install (TARGETS wxDatabaseApp_MySQL RUNTIME DESTINATION samples )
-endif(ENABLE_MYSQL)
 
-if(ENABLE_SQLITE AND BUILD_SAMPLE)
-    install (TARGETS wxDatabaseApp_SQLite3 RUNTIME DESTINATION samples)
-endif(ENABLE_SQLITE AND BUILD_SAMPLE)
-
-if(ENABLE_PGS AND BUILD_SAMPLE)
-    install (TARGETS wxDatabaseApp_PGS RUNTIME DESTINATION samples)
-endif(ENABLE_PGS AND BUILD_SAMPLE)
-
-if(ENABLE_ODBC AND BUILD_SAMPLE)
-    install (TARGETS wxDatabaseApp_ODBC RUNTIME DESTINATION samples)
-endif(ENABLE_ODBC AND BUILD_SAMPLE)
+if(BUILD_SAMPLE)
+    install (TARGETS wxDatabaseApp RUNTIME DESTINATION samples)
+endif(BUILD_SAMPLE)

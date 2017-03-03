@@ -14,13 +14,16 @@ The main interfaces of the component are:
  - wxDatabaseResultSet
 
 **Prerequites**:
-wxDatabase is a library that add databae support to wxWidgets. So you will need wxWidgets build. wxDatabases works with any wx29 series but you will save yourself a lot of pain by using 3.x instead as we test against that version.
+wxDatabase is a library that add database support to wxWidgets. So you will need wxWidgets build. wxDatabases works with any wx29 series but you will save yourself a lot of pain by using 3.x instead as we test against that version.
 
 **BUILDING**
 To build wxDatabase, you need to have the database development files for the database you want to connect (that is headers and library). 
 
 ## USING ODBC 
-To Succesful compile with ODBC you need header and libs for your ODBC driver installed. Here are some places to download the files necessary for ODBC
+To succesfully compile with ODBC you need header and libs for your ODBC driver installed. Here are some places to download the files necessary for ODBC
+
+## USING TDS
+To succesfully compile with TDS you need header and libs for FreeTDS driver installed. wxDatabase has been tested with freetds-1.00.24. Download the files from http://www.freetds.org/ and use CMake to build them.
 
 **WINDOWS**
 - [PostGreSQL](http://www.postgresql.org/ftp/odbc/versions/msi/) 

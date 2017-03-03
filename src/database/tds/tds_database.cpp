@@ -2,8 +2,6 @@
 
 #if wxUSE_DATABASE_TDS
 
-//#include <wx/tokenzr.h>
-
 TdsContextToDatabaseLayerMap wxTdsDatabase::m_ContextLookupMap;
 
 //AML start
@@ -109,7 +107,7 @@ wxTdsDatabase::wxTdsDatabase()
 	SetEncoding(&conv);
 }
 
-wxTdsDatabase::wxTdsDatabase(const wxString& strServer, const wxString& strDatabase, const wxString& strUser, const wxString& strPassword, int nTdsVersion)
+wxTdsDatabase::wxTdsDatabase(const wxString& strFreeTDS, const wxString& strServer, const wxString& strDatabase, const wxString& strUser, const wxString& strPassword, int nTdsVersion)
 : wxDatabase()
 {
 	m_pDatabase = NULL;
@@ -117,6 +115,7 @@ wxTdsDatabase::wxTdsDatabase(const wxString& strServer, const wxString& strDatab
 	m_pContext = NULL;
 	wxCSConv conv(_("UTF-8"));
 	SetEncoding(&conv);
+	m_strFreeTDS = strFreeTDS;
 	m_strServer = strServer;
 	m_strLogin = strUser;
 	m_strPassword = strPassword;
@@ -158,7 +157,7 @@ bool wxTdsDatabase::Open(const wxString& strDatabase)
 // Connect to the server
 bool wxTdsDatabase::Connect()
 {
-	m_pLogin = tds_alloc_login();
+	m_pLogin = tds_alloc_login(/*AML*/1);
 	if (m_pLogin == NULL)
 	{
 		//fprintf(stderr, "tds_alloc_login() failed.\n");
@@ -174,6 +173,8 @@ bool wxTdsDatabase::Connect()
 		ThrowDatabaseException();
 		return false;
 	}
+	wxCharBuffer freeTDSBuffer = ConvertToUnicodeStream(m_strFreeTDS);
+	tds_set_interfaces_file_loc(freeTDSBuffer);
 	wxCharBuffer serverBuffer = ConvertToUnicodeStream(m_strServer);
 	tds_set_server(m_pLogin, serverBuffer);
 	wxCharBuffer loginBuffer = ConvertToUnicodeStream(m_strLogin);
@@ -192,13 +193,23 @@ bool wxTdsDatabase::Connect()
 		tds_set_version(m_pLogin, 4, 6);
 		break;
 	case TDS_50:
-		tds_set_version(m_pLogin, 5, 0);
+		tds_set_version(m_pLogin, 5, 0); // Sybase
 		break;
 	case TDS_70:
-		tds_set_version(m_pLogin, 7, 0);
+		tds_set_version(m_pLogin, 7, 0); // SQL Server 7.0
 		break;
+	case TDS_71:
 	case TDS_80:
-		tds_set_version(m_pLogin, 8, 0);
+		tds_set_version(m_pLogin, 7, 1); // SQL Server 2000
+		break;
+	case TDS_72:
+		tds_set_version(m_pLogin, 7, 2); // SQL Server 2005
+		break;
+	case TDS_73:
+		tds_set_version(m_pLogin, 7, 3); // SQL Server 2008
+		break;
+	case TDS_74:
+		tds_set_version(m_pLogin, 7, 4); // SQL Server 2012
 		break;
 	default:
 		tds_set_version(m_pLogin, 0, 0);
@@ -254,16 +265,15 @@ bool wxTdsDatabase::Connect()
 	}
 	tds_set_parent(m_pDatabase, NULL);
 
-	TDSCONNECTION* pConnection = tds_read_config_info(NULL, m_pLogin, m_pContext->locale);
+	TDSLOGIN* pConnection = tds_read_config_info(NULL, m_pLogin, m_pContext->locale);
 
-	//AML if (!pConnection || tds_connect(m_pDatabase, pConnection) == TDS_FAIL)
 	if (!pConnection || tds_connect_and_login(m_pDatabase, pConnection) == TDS_FAIL)
 	{
 		if (pConnection)
 		{
 			tds_free_socket(m_pDatabase);
 			//m_pDatabase = NULL;
-			tds_free_connection(pConnection);
+			tds_free_login(pConnection);
 		}
 		//fprintf(stderr, "tds_connect() failed\n");
 		if (GetErrorCode() == wxDATABASE_OK)
@@ -285,7 +295,7 @@ bool wxTdsDatabase::Connect()
 		ThrowDatabaseException();
 		return false;
 	}
-	tds_free_connection(pConnection);
+	tds_free_login(pConnection);
 
 	return true;
 }
@@ -339,10 +349,8 @@ void wxTdsDatabase::FreeAllocatedResultSets(/*AML start*/status_t* status/*AML e
 	//fprintf(stderr, "In FreeAllocatedResultSets\n");
 	int rc;
 	int result_type;
-	/* */
-	//while ((rc = tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_TOKEN_RESULTS)) == TDS_SUCCEED)
-	//while ((rc = tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_RETURN_ROW|TDS_TOKEN_RESULTS|TDS_RETURN_COMPUTE)) == TDS_SUCCEED)
-	while ((rc = tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_STOPAT_ROWFMT|TDS_RETURN_DONE|TDS_RETURN_ROW|TDS_RETURN_COMPUTE)) == TDS_SUCCEED)
+	//while ((rc = tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_TOKEN_RESULTS)) == TDS_SUCCESS)
+	while ((rc = tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_RETURN_DONE|TDS_RETURN_ROW|TDS_RETURN_COMPUTE)) == TDS_SUCCESS)
 	{
 		switch (result_type)
 		{
@@ -350,7 +358,6 @@ void wxTdsDatabase::FreeAllocatedResultSets(/*AML start*/status_t* status/*AML e
 		case TDS_DONEPROC_RESULT:
 		case TDS_DONEINPROC_RESULT:
 		case TDS_STATUS_RESULT:
-			break;
 		case TDS_ROWFMT_RESULT:
 		case TDS_COMPUTEFMT_RESULT:
 		case TDS_DESCRIBE_RESULT:
@@ -359,7 +366,7 @@ void wxTdsDatabase::FreeAllocatedResultSets(/*AML start*/status_t* status/*AML e
 			//fprintf(stderr, "Warning (%d):  wxTdsDatabase query should not return results.  Type: %d\n", result_type, result_type);
 			if (m_pDatabase->current_results && m_pDatabase->current_results->num_cols > 0)
 			{
-				while (tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_STOPAT_ROWFMT|TDS_RETURN_DONE|TDS_RETURN_ROW) == TDS_SUCCEED)
+				while (tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_STOPAT_ROWFMT|TDS_RETURN_DONE|TDS_RETURN_ROW) == /*AML TDS_SUCCEED*/TDS_SUCCESS)
 				{
 					//fprintf(stderr, "Warning:  wxTdsDatabase TDS_ROW_RESULT query should not return results.  Type: %d\n", result_type);
 					if (result_type != TDS_ROW_RESULT)
@@ -379,35 +386,6 @@ void wxTdsDatabase::FreeAllocatedResultSets(/*AML start*/status_t* status/*AML e
 			//break;
 		}
 	}
-	/* 
-	while (tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_TOKEN_RESULTS) == TDS_SUCCEED) {
-	switch (result_type) {
-	case TDS_ROWFMT_RESULT:
-	break;
-	case TDS_ROW_RESULT:
-	while (tds_process_tokens(m_pDatabase, &result_type, NULL, TDS_STOPAT_ROWFMT|TDS_RETURN_DONE|TDS_RETURN_ROW) == TDS_SUCCEED) {
-	if (result_type != TDS_ROW_RESULT)
-	break;
-
-	if (!m_pDatabase->current_results)
-	continue;
-
-	TDSCOLUMN* col = m_pDatabase->current_results->columns[0];
-	int ctype = tds_get_conversion_type(col->column_type, col->column_size);
-
-	unsigned char* src = col->column_data;
-	int srclen = col->column_cur_size;
-
-	CONV_RESULT dres;
-	tds_convert(m_pDatabase->tds_ctx, ctype, (TDS_CHAR *) src, srclen, SYBINT4, &dres);
-	int optionval = dres.i;
-	}
-	break;
-	default:
-	break;
-	}
-	}
-	*/
 
 	//AML start
 	if (m_pDatabase != NULL && status != NULL)
@@ -487,7 +465,7 @@ int wxTdsDatabase::RunQuery(const wxString& strQuery, bool bParseQuery)
 
 		//fprintf(stderr, "Running query '%s'\n", (const char*)sqlBuffer);
 		int nReturn = tds_submit_query(m_pDatabase, sqlBuffer);
-		if (nReturn != TDS_SUCCEED)
+		if (nReturn != /*AML TDS_SUCCEED*/TDS_SUCCESS)
 		{
 			//fprintf(stderr, "tds_submit_query() failed for query '%s'\n", sqlBuffer);
 			//fprintf(stderr, "tds_submit_query() failed for query '%s'\n", (sql).c_str());
@@ -524,7 +502,7 @@ wxDatabaseResultSet* wxTdsDatabase::RunQueryWithResults(const wxString& strQuery
 
 			//fprintf(stderr, "Running query '%s'\n", sqlBuffer);
 			int nReturn = tds_submit_query(m_pDatabase, sqlBuffer);
-			if (nReturn != TDS_SUCCEED)
+			if (nReturn != TDS_SUCCESS)
 			{
 				//fprintf(stderr, "tds_submit_query() failed for query '%s'\n", sql.c_str());
 				FreeAllocatedResultSets();
@@ -539,7 +517,7 @@ wxDatabaseResultSet* wxTdsDatabase::RunQueryWithResults(const wxString& strQuery
 		wxCharBuffer sqlBuffer = ConvertToUnicodeStream(strQuery);
 		//fprintf(stderr, "Running query (with results) '%s'\n", sqlBuffer);
 		int nReturn = tds_submit_query(m_pDatabase, sqlBuffer);
-		if (nReturn != TDS_SUCCEED)
+		if (nReturn != /*AML TDS_SUCCEED*/TDS_SUCCESS)
 		{
 			//fprintf(stderr, "tds_submit_query() failed for query '%s'\n", sqlBuffer);
 			//fprintf(stderr, "tds_submit_query() failed for query '%s'\n", strQuery.c_str());
@@ -567,32 +545,28 @@ wxPreparedStatement* wxTdsDatabase::PrepareStatement(const wxString& strQuery)
 
 	if (m_pDatabase != NULL)
 	{
-		wxString sql = RemoveLastSemiColon(strQuery);
-		/*
+		wxString sql = RemoveLastSemiColon(strQuery);	
+
 		wxCharBuffer sqlBuffer = ConvertToUnicodeStream(sql);
 		TDSDYNAMIC* pStatement = NULL;
-		TDSPARAMINFO* pParameters = NULL;
+		TDSPARAMINFO* pParameters = GetParameters(strQuery);
 		int nReturn = tds_submit_prepare(m_pDatabase, sqlBuffer, NULL, &pStatement, pParameters);
-		if (nReturn != TDS_SUCCEED)
+		if (nReturn != TDS_SUCCESS)
 		{
-		//fprintf(stderr, "tds_submit_prepare() failed for query '%s'\n", strQuery.c_str());
+			//fprintf(stderr, "tds_submit_prepare() failed for query '%s'\n", strQuery.c_str());
 
-		if (pStatement != NULL)
-		tds_free_dynamic(m_pDatabase, pStatement);
-		if (pParameters != NULL)
-		tds_free_param_results(pParameters);
+			if (pStatement != NULL)
+				tds_release_dynamic(&pStatement);
 
-		FreeAllocatedResultSets();
-		ThrowDatabaseException();
-		return NULL;
+			FreeAllocatedResultSets();
+			ThrowDatabaseException();
+			return NULL;
 		}
+		if (pParameters != NULL)
+			tds_free_param_results(pParameters);
 		FreeAllocatedResultSets();
 
 		wxTdsPreparedStatement* pReturnStatement = new wxTdsPreparedStatement(m_pDatabase, pStatement, strQuery);
-		if (pReturnStatement)
-		pReturnStatement->SetEncoding(GetEncoding());
-		*/
-		wxTdsPreparedStatement* pReturnStatement = new wxTdsPreparedStatement(m_pDatabase, sql/*AML start*/, m_nTdsVersion/*AML end*/);
 		if (pReturnStatement)
 			pReturnStatement->SetEncoding(GetEncoding());
 
@@ -821,63 +795,6 @@ wxArrayString wxTdsDatabase::GetColumns(const wxString& table)
 {
 	wxArrayString returnArray;
 
-	// Keep these variables outside of scope so that we can clean them up
-	//  in case of an error
-	/* -- Prepared statement support isn't working as well as it should so use concatenated wxStrings
-	wxPreparedStatement* pStatement = NULL;
-	wxDatabaseResultSet* pResult = NULL;
-
-	#if wxUSE_DATABASE_EXCEPTIONS
-	try
-	{
-	#endif
-	wxString query = _("sp_columns ?;");
-	pStatement = PrepareStatement(query);
-	if (pStatement)
-	{
-	pStatement->SetParamString(1, table);
-	pResult = pStatement->ExecuteQuery();
-	if (pResult)
-	{
-	while (pResult->Next())
-	{
-	//wxPrintf(_("Adding table: '%s'\n"), pResult->GetResultString(_("TABLE_NAME")).Trim());
-	returnArray.Add(pResult->GetResultString(_("TABLE_NAME")).Trim());
-	}
-	}
-	}
-	#if wxUSE_DATABASE_EXCEPTIONS
-	}
-	catch (wxDatabaseException& e)
-	{
-	if (pResult != NULL)
-	{
-	CloseResultSet(pResult);
-	pResult = NULL;
-	}
-
-	if (pStatement != NULL)
-	{
-	CloseStatement(pStatement);
-	pStatement = NULL;
-	}
-
-	throw e;
-	}
-	#endif
-
-	if (pResult != NULL)
-	{
-	CloseResultSet(pResult);
-	pResult = NULL;
-	}
-
-	if (pStatement != NULL)
-	{
-	CloseStatement(pStatement);
-	pStatement = NULL;
-	}
-	*/
 	wxDatabaseResultSet* pResult = NULL;
 #if wxUSE_DATABASE_EXCEPTIONS
 	try
@@ -959,7 +876,16 @@ wxArrayString wxTdsDatabase::GetPKColumns(const wxString& table)
 void wxTdsDatabase::SetError(int nCode, const wxString& strMessage)
 {
 	SetErrorCode(TranslateErrorCode(nCode));
-	SetErrorMessage(strMessage);
+	wxString msg = GetErrorMessage();
+	if (msg.Length() > 0) 
+	{
+		msg += "\n" + strMessage;
+	}
+	else
+	{
+		msg = strMessage;
+	}
+	SetErrorMessage(msg);
 
 	// We really don't want to throw the exception here since it removes
 	//  the ability of the calling code to cleanup any memory usage
@@ -993,6 +919,45 @@ void wxTdsDatabase::AddTdsLayer(TDSCONTEXT* pContext, wxTdsDatabase* pLayer)
 void wxTdsDatabase::RemoveTdsLayer(TDSCONTEXT* pContext)
 {
 	wxTdsDatabase::m_ContextLookupMap.erase(pContext);
+}
+
+TDSPARAMINFO* wxTdsDatabase::GetParameters(const wxString& strQuery)
+{
+	TDSPARAMINFO* params = NULL;
+	wxChar previous = '\0';
+	bool bUnicode = false;
+	bool bInStringLiteral = false;
+	for (size_t i = 0; i < strQuery.length(); i++)
+	{
+		wxChar character = strQuery[i];
+		if ('\'' == character)
+		{
+			// Signify that we are inside a string literal inside the SQL
+			bInStringLiteral = !bInStringLiteral;
+			// Is it a unicode string literal
+			if (bInStringLiteral && previous == 'N') bUnicode = true;
+		}
+		else if (('?' == character) && !bInStringLiteral)
+		{
+			params = tds_alloc_param_result(params);
+			TDSCOLUMN* col = params->columns[params->num_cols-1];
+			if (bUnicode)
+			{
+				tds_set_param_type(m_pDatabase->conn, col, XSYBNVARCHAR);
+				col->column_varint_size = 8;
+			}
+			else
+			{
+				tds_set_param_type(m_pDatabase->conn, col, XSYBVARCHAR);
+				col->column_size = 8000;
+				col->on_server.column_size = 8000;
+				col->column_cur_size = 8000;
+			}
+			bUnicode = false;
+		}
+		previous = character;
+	}
+	return params;
 }
 
 #endif//wxUSE_DATABASE_TDS

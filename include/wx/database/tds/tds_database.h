@@ -13,7 +13,7 @@ class WXDLLIMPEXP_DATABASE wxTdsDatabase : public wxDatabase
 public:
 	// ctor()
 	wxTdsDatabase();
-	wxTdsDatabase(const wxString& strServer, const wxString& strDatabase, const wxString& strUser, const wxString& strPassword, int nTdsVersion = TDS_80);
+	wxTdsDatabase(const wxString& strFreeTDS, const wxString& strServer, const wxString& strDatabase, const wxString& strUser, const wxString& strPassword, int nTdsVersion = TDS_80);
 
 	// dtor()
 	virtual ~wxTdsDatabase();
@@ -40,8 +40,8 @@ public:
 
 	// wxPreparedStatement support
 	virtual wxPreparedStatement* PrepareStatement(const wxString& strQuery);
-	wxPreparedStatement* PrepareStatement(const wxString& strQuery, bool bLogForCleanup);
 
+	void SetFreeTDS(const wxString& strFreeTDS) { m_strFreeTDS = strFreeTDS; }
 	void SetServer(const wxString& strServer) { m_strServer = strServer; }
 	void SetDatabase(const wxString& strDatabase) { m_strDatabase = strDatabase; }
 	void SetLogin(const wxString& strLogin) { m_strLogin = strLogin; }
@@ -57,6 +57,8 @@ public:
 		//AML start
 		TDS_71,
 		TDS_72,
+		TDS_73,
+		TDS_74,
 		//AML end
 		TDS_80
 	};
@@ -85,9 +87,12 @@ private:
 	static void AddTdsLayer(TDSCONTEXT* pContext, wxTdsDatabase* pLayer);
 	static void RemoveTdsLayer(TDSCONTEXT* pContext);
 
+	TDSPARAMINFO* GetParameters(const wxString& strQuery);
+
 	// Map of TDSCONTEXT* to wxTdsDatabase* to be used by the error handler
 	static TdsContextToDatabaseLayerMap m_ContextLookupMap;
-
+	
+	wxString m_strFreeTDS;
 	wxString m_strServer;
 	wxString m_strDatabase;
 	wxString m_strLogin;
