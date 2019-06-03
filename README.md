@@ -88,5 +88,7 @@ wxDatabase is community driven and have a number of contributors. The following 
 - Patrick Geltinger (@patlkli)
 
 ## wxDatabase LICENCE
-wxDatabase Library is released under wxWidgets License. If you want to give us credit, point URL to http://hosannahighertech.co.tz but its not mandatory.
-If you have any question that cannot be asked in wxWidgets forum or mailing list or its personal, contact me at support<(a.t)>hosannahighertech.co.tz
+wxDatabase Library is released under wxWidgets License. If you are using native libraries be sure to check their respective licenses before using them. Please use issue tracker for bug report, or feature requests. Before you ask, please search the issues and the internet as someone might have asked.
+
+### IMPORTANT NOTICE
+Please use issue tracker for bugs and feature requests. Questions can be asked at the [forum](https://forums.wxwidgets.org/viewforum.php?f=34)
