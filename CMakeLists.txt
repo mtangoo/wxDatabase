@@ -1,12 +1,19 @@
-#To Do List
-#Build Types from Options -- Debug Release
-#making DLL/LIB
-#Add Support for Other DB than MySQL on build 
-cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR) 
-project (wxDatabase)
-string(TOLOWER ${CMAKE_PROJECT_NAME} LIB_OUTPUT_NAME) 
+cmake_minimum_required(VERSION 3.1)
 
-cmake_policy(SET CMP0043 NEW)
+if(NOT CMAKE_VERSION VERSION_LESS "3.3")
+    # Don't ignore visibility related properties for non-SHARED targets
+    cmake_policy(SET CMP0063 NEW)
+endif()
+
+if (NOT CMAKE_VERSION VERSION_LESS "3.13")
+    # CMP0077: option() honors normal variables
+    # https://cmake.org/cmake/help/latest/policy/CMP0077.html
+    cmake_policy(SET CMP0077 NEW)
+endif()
+
+project (wxDatabase)
+string(TOLOWER ${PROJECT_NAME} LIB_OUTPUT_NAME) 
+
 # The version number.
 set (wxDATABASE_VERSION_MAJOR 1)
 set (wxDATABASE_VERSION_MINOR 0)
@@ -19,26 +26,18 @@ option (ENABLE_TDS "Enable MSSQL Access with TDS Database" ON)
 option (ENABLE_ODBC "Enable ODBC Access" ON) 
 option (BUILD_SAMPLE "Build Sample Application" ON) 
 #Build type
-set(CMAKE_BUILD_TYPE Debug)
-#to specify wxDir on non-Windows you need extra check for wxConfig
-
-if(WIN32)
-    #the next line can be used to set an environment variable or it can be done inside a shell
-    #set (WXWIN, "home/stefano/wxwidgets")
-else(WIN32)
-    #pass it with option like this --> cmake -DWXWIN=/home/stefano/wxwidgets   
-    set(wxWidgets_CONFIG_EXECUTABLE "${WXWIN}/wx-config")
-endif(WIN32) 
+#set(CMAKE_BUILD_TYPE Debug)
 
 #Set Directories
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 #Core include directories 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-#without these they don't work
-set(SOURCES) 
-set(LINKER_DIRS, "") 
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
+
+set(wxDATABASE_LIBRARIES ${LIB_OUTPUT_NAME} CACHE INTERNAL "")
+set(wxDATABASE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include CACHE INTERNAL "")
 
 #Core Sources  
 file(GLOB CORE_SRC "src/base/*.cpp")
@@ -54,12 +53,12 @@ if(wxWidgets_FOUND)
 	include(${wxWidgets_USE_FILE})  
 else(wxWidgets_FOUND)
     #This message does not seem to be sent, even if wxWidgets is not found.
-	message(FATAL_ERROR "wxWidgets Not Found. Please set WXWIN or add it to System path")
+	message(FATAL_ERROR "wxWidgets Not Found. Please add it to System path")
 endif(wxWidgets_FOUND)
 
 #Support for MySQL?
 if (ENABLE_MYSQL)   
-    find_package(MySQL REQUIRED)
+    find_package(MySQL)
     if(MYSQL_FOUND)
         #add MySQL include. libs are seemed to dealt with in find_package
         include_directories(${MYSQL_INCLUDE_DIR})         
@@ -73,6 +72,21 @@ if (ENABLE_MYSQL)
         list(APPEND SOURCES ${CORE_MYSQL_SRC})  	
         #Tell CMake to Pass this variable_requires
         add_definitions(-DwxUSE_DATABASE_MYSQL=1)
+    else()
+        find_package(MariaDB REQUIRED)
+        if(MARIADB_FOUND)
+            include_directories(${MARIADB_INCLUDE_DIR})         
+            list(APPEND LINKER_DIRS  ${MARIADB_LIBRARY_DIR}) 
+            
+            #add wxDatabase MySQL Include and sources for compiling
+            INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include/database/mysql)
+            
+            #append to main SRC
+            file(GLOB CORE_MYSQL_SRC "src/database/mysql/*.cpp")
+            list(APPEND SOURCES ${CORE_MYSQL_SRC})  	
+            #Tell CMake to Pass this variable_requires
+            add_definitions(-DwxUSE_DATABASE_MYSQL=1)
+        endif(MARIADB_FOUND)
     endif(MYSQL_FOUND) 	
 endif (ENABLE_MYSQL) 
 
