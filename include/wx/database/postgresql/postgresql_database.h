@@ -58,10 +58,18 @@ public:
   // Database schema API contributed by M. Szeftel (author of wxActiveRecordGenerator)
   virtual bool TableExists(const wxString& table);
   virtual bool ViewExists(const wxString& view);
+
   virtual wxArrayString GetTables();
+  virtual wxArrayString GetTables(const wxString& schema);
+
   virtual wxArrayString GetViews();
+  virtual wxArrayString GetViews(const wxString& schema);
+
   virtual wxArrayString GetColumns(const wxString& table);
+  virtual wxArrayString GetColumns(const wxString& table, const wxString& schema);
+  
   virtual wxArrayString GetPKColumns(const wxString& table);
+  virtual wxArrayString GetPKColumns(const wxString& table, const wxString& schema);
 
   void SetPort(int nPort);
 

@@ -2,6 +2,7 @@
 #define _WX_DATABASE_RESULT_SET_H_
 
 #include "wx/database/wxprec.h"
+#include <wx/wx.h>
 
 WX_DECLARE_STRING_HASH_MAP(int, StringToIntMap);
 WX_DECLARE_HASH_SET( wxResultSetMetaData*, wxPointerHash, wxPointerEqual, wxMetaDataHashSet );

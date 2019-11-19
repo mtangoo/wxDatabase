@@ -70,12 +70,16 @@ public:
   virtual bool ViewExists(const wxString& view) = 0;
   /// Retrieve all table names
   virtual wxArrayString GetTables() = 0;
+  virtual wxArrayString GetTables(const wxString& schema){ return wxArrayString(); }
   /// Retrieve all view names
   virtual wxArrayString GetViews() = 0;
+  virtual wxArrayString GetViews(const wxString& schema){ return wxArrayString(); }
   /// Retrieve all column names for a table
   virtual wxArrayString GetColumns(const wxString& table) = 0;
+  virtual wxArrayString GetColumns(const wxString& table, const wxString& schema){ return wxArrayString(); }
   ///get Primary keys column names
   virtual wxArrayString GetPKColumns(const wxString& table) = 0;
+  virtual wxArrayString GetPKColumns(const wxString& table, const wxString& schema){ return wxArrayString(); }
 
   // Database single result retrieval API contributed by Guru Kathiresan
   /// With the GetSingleResultX API, two additional exception types are thrown:

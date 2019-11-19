@@ -476,6 +476,12 @@ bool wxPostgresDatabase::ViewExists(const wxString& view)
 
 wxArrayString wxPostgresDatabase::GetTables()
 {
+  wxString schema = "public";
+  return GetTables(schema);
+}
+
+wxArrayString wxPostgresDatabase::GetTables(const wxString& schema)
+{
   wxArrayString returnArray;
 
   wxDatabaseResultSet* pResult = NULL;
@@ -483,7 +489,8 @@ wxArrayString wxPostgresDatabase::GetTables()
   try
   {
 #endif
-    wxString query = _("SELECT table_name FROM information_schema.tables WHERE table_type='BASE TABLE' AND table_schema='public';");
+    wxString query;
+    query.Printf("SELECT table_name FROM information_schema.tables WHERE table_type='BASE TABLE' AND table_schema='%s';", schema);
     pResult = ExecuteQuery(query);
 
     while (pResult->Next())
@@ -515,6 +522,12 @@ wxArrayString wxPostgresDatabase::GetTables()
 
 wxArrayString wxPostgresDatabase::GetViews()
 {
+  wxString schema = "public";
+  return GetViews(schema);
+}
+
+wxArrayString wxPostgresDatabase::GetViews(const wxString& schema)
+{
   wxArrayString returnArray;
 
   wxDatabaseResultSet* pResult = NULL;
@@ -522,7 +535,8 @@ wxArrayString wxPostgresDatabase::GetViews()
   try
   {
 #endif
-    wxString query = _("SELECT table_name FROM information_schema.tables WHERE table_type='VIEW' AND table_schema='public';");
+    wxString query;
+    query.Printf("SELECT table_name FROM INFORMATION_SCHEMA.views WHERE table_schema = ANY (current_schemas(false)) AND table_schema = '%s';", schema);
     pResult = ExecuteQuery(query);
 
     while (pResult->Next())
@@ -554,6 +568,12 @@ wxArrayString wxPostgresDatabase::GetViews()
 
 wxArrayString wxPostgresDatabase::GetColumns(const wxString& table)
 {
+  wxString schema = "public";
+  return GetColumns(table, schema);
+}
+
+wxArrayString wxPostgresDatabase::GetColumns(const wxString& table, const wxString& schema)
+{
   // Initialize variables
   wxArrayString returnArray;
 
@@ -566,11 +586,12 @@ wxArrayString wxPostgresDatabase::GetColumns(const wxString& table)
   try
   {
 #endif
-    wxString query = _("SELECT column_name FROM information_schema.columns WHERE table_name=? ORDER BY ordinal_position;");
+    wxString query = "SELECT column_name FROM information_schema.columns WHERE table_name=? AND table_schema = ? ORDER BY ordinal_position;";
     pStatement = PrepareStatement(query);
     if (pStatement)
     {
       pStatement->SetParamString(1, table);
+      pStatement->SetParamString(2, schema);
       pResult = pStatement->ExecuteQuery();
       if (pResult)
       {
@@ -618,6 +639,12 @@ wxArrayString wxPostgresDatabase::GetColumns(const wxString& table)
 
 wxArrayString wxPostgresDatabase::GetPKColumns(const wxString& table)
 {
+  wxString schema = "public";
+  return GetPKColumns(table, schema);
+}
+
+wxArrayString wxPostgresDatabase::GetPKColumns(const wxString& table, const wxString& schema)
+{
   // Initialize variables
   wxArrayString returnArray;
 
@@ -630,17 +657,18 @@ wxArrayString wxPostgresDatabase::GetPKColumns(const wxString& table)
   try
   {
 #endif
-    wxString query = _("SELECT pg_attribute.attname,format_type(pg_attribute.atttypid, pg_attribute.atttypmod) FROM pg_index, pg_class, pg_attribute WHERE   pg_class.oid = ? ::regclass AND   indrelid = pg_class.oid AND   pg_attribute.attrelid = pg_class.oid AND pg_attribute.attnum = any(pg_index.indkey) AND indisprimary;");
+    wxString query = "SELECT kcu.column_name AS key_column FROM information_schema.table_constraints tco JOIN information_schema.key_column_usage kcu ON kcu.constraint_name = tco.constraint_name AND kcu.constraint_schema = tco.constraint_schema AND kcu.constraint_name = tco.constraint_name WHERE tco.constraint_type = 'PRIMARY KEY' AND kcu.table_name = ? AND kcu.table_schema = ?  ORDER BY kcu.column_name;";
     pStatement = PrepareStatement(query);
     if (pStatement)
     {
       pStatement->SetParamString(1, table);
+      pStatement->SetParamString(2, schema);
       pResult = pStatement->ExecuteQuery();
       if (pResult)
       {
         while (pResult->Next())
         {
-          returnArray.Add(pResult->GetResultString(wxT("attname")));
+          returnArray.Add(pResult->GetResultString(1));
         }
       }
     }
