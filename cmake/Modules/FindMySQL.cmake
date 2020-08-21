@@ -1,135 +1,129 @@
-#--------------------------------------------------------
-# Copyright (C) 1995-2007 MySQL AB
+# - Try to find MySQL / MySQL Embedded library
+# Find the MySQL includes and client library
+# This module defines
+#  MYSQL_INCLUDE_DIR, where to find mysql.h
+#  MYSQL_LIBRARIES, the libraries needed to use MySQL.
+#  MYSQL_LIB_DIR, path to the MYSQL_LIBRARIES
+#  MYSQL_EMBEDDED_LIBRARIES, the libraries needed to use MySQL Embedded.
+#  MYSQL_EMBEDDED_LIB_DIR, path to the MYSQL_EMBEDDED_LIBRARIES
+#  MYSQL_FOUND, If false, do not try to use MySQL.
+#  MYSQL_EMBEDDED_FOUND, If false, do not try to use MySQL Embedded.
+
+# Copyright (c) 2006-2008, Jarosław Staniek <staniek@kde.org>
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of version 2 of the GNU General Public License as
-# published by the Free Software Foundation.
-#
-# There are special exceptions to the terms and conditions of the GPL
-# as it is applied to this software. View the full text of the exception
-# in file LICENSE.exceptions in the top-level directory of this software
-# distribution.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
-#
-# The MySQL Connector/ODBC is licensed under the terms of the
-# GPL, like most MySQL Connectors. There are special exceptions
-# to the terms and conditions of the GPL as it is applied to
-# this software, see the FLOSS License Exception available on
-# mysql.com.
+# Redistribution and use is allowed according to the terms of the BSD license.
+# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
-#Edited by Stefano Mtangoo - hosannahighertech.co.tz
+include(CheckCXXSourceCompiles)
 
-##########################################################################
+if(WIN32)
+   find_path(MYSQL_INCLUDE_DIR mysql.h
+      PATHS
+      $ENV{MYSQL_INCLUDE_DIR}
+      $ENV{MYSQL_DIR}/include
+      $ENV{ProgramFiles}/MySQL/*/include
+      $ENV{SystemDrive}/MySQL/*/include
+      $ENV{ProgramW6432}/MySQL/*/include
+   )
+else(WIN32)
+   find_path(MYSQL_INCLUDE_DIR mysql.h
+      PATHS
+      $ENV{MYSQL_INCLUDE_DIR}
+      $ENV{MYSQL_DIR}/include
+      /usr/local/mysql/include
+      /opt/mysql/mysql/include
+      PATH_SUFFIXES
+      mysql
+   )
+endif(WIN32)
 
+if(WIN32)
+   if (${CMAKE_BUILD_TYPE})
+    string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_TOLOWER)
+   endif()
 
-#-------------- FIND MYSQL_INCLUDE_DIR ------------------
-FIND_PATH(MYSQL_INCLUDE_DIR mysql.h
-  /usr/include/mysql
-  /usr/local/include/mysql
-  /opt/mysql/mysql/include
-  /opt/mysql/mysql/include/mysql
-  /opt/mysql/include
-  /opt/local/include/mysql5
-  /usr/local/mysql/include
-  /usr/local/mysql/include/mysql
-  $ENV{ProgramFiles}/MySQL/*/include
-  $ENV{SystemDrive}/MySQL/*/include  
-  $ENV{SystemDrive}/MariaDB/*/include
-  $ENV{ProgramFiles}/MariaDB/*/include)
+   # path suffix for debug/release mode
+   # binary_dist: mysql binary distribution
+   # build_dist: custom build
+   if(CMAKE_BUILD_TYPE_TOLOWER MATCHES "debug")
+      set(binary_dist debug)
+      set(build_dist Debug)
+   else(CMAKE_BUILD_TYPE_TOLOWER MATCHES "debug")
+      ADD_DEFINITIONS(-DDBUG_OFF)
+      set(binary_dist opt)
+      set(build_dist Release)
+   endif(CMAKE_BUILD_TYPE_TOLOWER MATCHES "debug")
 
-#----------------- FIND MYSQL_LIB_DIR -------------------
-IF (WIN32)
-  # Set lib path suffixes
-  # dist = for mysql binary distributions
-  # build = for custom built tree
-  IF (CMAKE_BUILD_TYPE STREQUAL Debug)
-    SET(libsuffixDist debug)
-    SET(libsuffixBuild Debug)
-  ELSE (CMAKE_BUILD_TYPE STREQUAL Debug)
-    SET(libsuffixDist opt)
-    SET(libsuffixBuild Release)
-    ADD_DEFINITIONS(-DDBUG_OFF)
-  ENDIF (CMAKE_BUILD_TYPE STREQUAL Debug)
-  
-  # Work around $ENV problem searching for Program Files(x86)
-  set(ProgramFiles86 "Program Files (x86)")
+#   find_library(MYSQL_LIBRARIES NAMES mysqlclient
+   set(MYSQL_LIB_PATHS
+      $ENV{MYSQL_DIR}/lib/${binary_dist}
+      $ENV{MYSQL_DIR}/libmysql/${build_dist}
+      $ENV{MYSQL_DIR}/client/${build_dist}
+      $ENV{ProgramFiles}/MySQL/*/lib/${binary_dist}
+      $ENV{SystemDrive}/MySQL/*/lib/${binary_dist}
+      $ENV{MYSQL_DIR}/lib/opt
+      $ENV{MYSQL_DIR}/client/release
+      $ENV{ProgramFiles}/MySQL/*/lib/opt
+      $ENV{SystemDrive}/MySQL/*/lib/opt
+      $ENV{ProgramW6432}/MySQL/*/lib
+   )
+   find_library(MYSQL_LIBRARIES NAMES libmysql
+      PATHS
+      ${MYSQL_LIB_PATHS}
+   )
+else(WIN32)
+#   find_library(MYSQL_LIBRARIES NAMES mysqlclient
+   set(MYSQL_LIB_PATHS
+      $ENV{MYSQL_DIR}/libmysql_r/.libs
+      $ENV{MYSQL_DIR}/lib
+      $ENV{MYSQL_DIR}/lib/mysql
+      /usr/local/mysql/lib
+      /opt/mysql/mysql/lib
+      $ENV{MYSQL_DIR}/libmysql_r/.libs
+      $ENV{MYSQL_DIR}/lib
+      $ENV{MYSQL_DIR}/lib/mysql
+      /usr/local/mysql/lib
+      /opt/mysql/mysql/lib
+      PATH_SUFFIXES
+      mysql
+   )
+   find_library(MYSQL_LIBRARIES NAMES mysqlclient
+      PATHS
+      ${MYSQL_LIB_PATHS}
+   )
+endif(WIN32)
 
-  FIND_LIBRARY(MYSQL_LIB NAMES mysqlclient mariadb libmysql
-    PATHS
-    $ENV{MYSQL_DIR}/lib/${libsuffixDist}
-    $ENV{MYSQL_DIR}/libmysql
-    $ENV{MYSQL_DIR}/libmysql/${libsuffixBuild}
-    $ENV{MYSQL_DIR}/client/${libsuffixBuild}
-    $ENV{MYSQL_DIR}/libmysql/${libsuffixBuild}
-    $ENV{ProgramFiles}/MySQL/*/lib/${libsuffixDist}
-    $ENV{ProgramFiles}/MySQL/*/lib/
-    $ENV{SystemDrive}/MySQL/*/lib/${libsuffixDist}
-    
-    $ENV{MYSQL_DIR}/lib/${libsuffixDist}
-    $ENV{MYSQL_DIR}/libmariadb
-    $ENV{MYSQL_DIR}/libmariadb/${libsuffixBuild}
-    $ENV{MYSQL_DIR}/client/${libsuffixBuild}
-    $ENV{MYSQL_DIR}/libmariadb/${libsuffixBuild}
-    $ENV{ProgramFiles}/MariaDB/*/lib/
-    $ENV{ProgramFiles}/MariaDB/*/lib/${libsuffixDist}
-    $ENV{SystemDrive}/MariaDB/*/lib/${libsuffixDist}
-    )
-ELSE (WIN32)
-  FIND_LIBRARY(MYSQL_LIB NAMES mysqlclient_r
-    PATHS
-    /usr/lib/mysql
-    /usr/local/lib/mysql
-    /usr/local/mysql/lib
-    /usr/local/mysql/lib/mysql
-    /opt/local/mysql5/lib
-    /opt/local/lib/mysql5/mysql
-    /opt/mysql/mysql/lib/mysql
-    /opt/mysql/lib/mysql)
-ENDIF (WIN32)
+find_library(MYSQL_EMBEDDED_LIBRARIES NAMES mysqld
+   PATHS
+   ${MYSQL_LIB_PATHS}
+)
 
-IF(MYSQL_LIB)
-  GET_FILENAME_COMPONENT(MYSQL_LIB_DIR ${MYSQL_LIB} PATH)
-ENDIF(MYSQL_LIB)
+if(MYSQL_LIBRARIES)
+   get_filename_component(MYSQL_LIB_DIR ${MYSQL_LIBRARIES} PATH)
+endif(MYSQL_LIBRARIES)
 
-IF (MYSQL_INCLUDE_DIR AND MYSQL_LIB_DIR)
-  SET(MYSQL_FOUND TRUE)
+if(MYSQL_EMBEDDED_LIBRARIES)
+   get_filename_component(MYSQL_EMBEDDED_LIB_DIR ${MYSQL_EMBEDDED_LIBRARIES} PATH)
+endif(MYSQL_EMBEDDED_LIBRARIES)
 
-  INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_DIR})
-  LINK_DIRECTORIES(${MYSQL_LIB_DIR})
+set( CMAKE_REQUIRED_INCLUDES ${MYSQL_INCLUDE_DIR} )
+set( CMAKE_REQUIRED_LIBRARIES ${MYSQL_EMBEDDED_LIBRARIES} )
+check_cxx_source_compiles( "#include <mysql.h>\nint main() { int i = MYSQL_OPT_USE_EMBEDDED_CONNECTION; }" HAVE_MYSQL_OPT_EMBEDDED_CONNECTION )
 
-  FIND_LIBRARY(MYSQL_ZLIB zlib PATHS ${MYSQL_LIB_DIR})
-  FIND_LIBRARY(MYSQL_YASSL yassl PATHS ${MYSQL_LIB_DIR})
-  FIND_LIBRARY(MYSQL_TAOCRYPT taocrypt PATHS ${MYSQL_LIB_DIR})
-  
-  IF(MYSQL_LIB)
-	SET(MYSQL_CLIENT_LIBS ${MYSQL_LIB})
-  ENDIF(MYSQL_LIB)
-  
-  IF (MYSQL_ZLIB)
-    SET(MYSQL_CLIENT_LIBS ${MYSQL_CLIENT_LIBS} zlib)
-  ENDIF (MYSQL_ZLIB)
-  IF (MYSQL_YASSL)
-    SET(MYSQL_CLIENT_LIBS ${MYSQL_CLIENT_LIBS} yassl)
-  ENDIF (MYSQL_YASSL)
-  IF (MYSQL_TAOCRYPT)
-    SET(MYSQL_CLIENT_LIBS ${MYSQL_CLIENT_LIBS} taocrypt)
-  ENDIF (MYSQL_TAOCRYPT)
-  # Added needed mysqlclient dependencies on Windows
-  IF (WIN32)
-    SET(MYSQL_CLIENT_LIBS ${MYSQL_CLIENT_LIBS} ws2_32)
-  ENDIF (WIN32)
+if(MYSQL_INCLUDE_DIR AND MYSQL_LIBRARIES)
+   set(MYSQL_FOUND TRUE)
+   message(STATUS "Found MySQL: ${MYSQL_INCLUDE_DIR}, ${MYSQL_LIBRARIES}")
+else(MYSQL_INCLUDE_DIR AND MYSQL_LIBRARIES)
+   set(MYSQL_FOUND FALSE)
+   message(STATUS "MySQL not found.")
+endif(MYSQL_INCLUDE_DIR AND MYSQL_LIBRARIES)
 
-  MESSAGE(STATUS "MySQL Include dir: ${MYSQL_INCLUDE_DIR}  library dir: ${MYSQL_LIB_DIR}")
-  MESSAGE(STATUS "MySQL client libraries: ${MYSQL_CLIENT_LIBS}")
-ELSEIF (MySQL_FIND_REQUIRED)
-  MESSAGE(FATAL_ERROR "Cannot find MySQL. Include dir: ${MYSQL_INCLUDE_DIR}  library dir: ${MYSQL_LIB_DIR}")
-ENDIF (MYSQL_INCLUDE_DIR AND MYSQL_LIB_DIR)
+if(MYSQL_INCLUDE_DIR AND MYSQL_EMBEDDED_LIBRARIES AND HAVE_MYSQL_OPT_EMBEDDED_CONNECTION)
+   set(MYSQL_EMBEDDED_FOUND TRUE)
+   message(STATUS "Found MySQL Embedded: ${MYSQL_INCLUDE_DIR}, ${MYSQL_EMBEDDED_LIBRARIES}")
+else(MYSQL_INCLUDE_DIR AND MYSQL_EMBEDDED_LIBRARIES AND HAVE_MYSQL_OPT_EMBEDDED_CONNECTION)
+   set(MYSQL_EMBEDDED_FOUND FALSE)
+   message(STATUS "MySQL Embedded not found.")
+endif(MYSQL_INCLUDE_DIR AND MYSQL_EMBEDDED_LIBRARIES AND HAVE_MYSQL_OPT_EMBEDDED_CONNECTION)
+
+mark_as_advanced(MYSQL_INCLUDE_DIR MYSQL_LIBRARIES MYSQL_EMBEDDED_LIBRARIES)

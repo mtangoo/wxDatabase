@@ -4,6 +4,11 @@
 #include "wx/database/wxprec.h"
 #include <wx/dynlib.h>
 
+#if !defined(MARIADB_BASE_VERSION) && !defined(MARIADB_VERSION_ID) && \
+  MYSQL_VERSION_ID >= 80001 && MYSQL_VERSION_ID != 80002
+typedef bool my_bool;
+#endif
+
 typedef void (STDCALL *MysqlServerEndType)(void);
 typedef MYSQL* (STDCALL *MysqlInitType)(MYSQL*);
 typedef MYSQL* (STDCALL *MysqlRealConnectType)(MYSQL*, const char*, const char*,
