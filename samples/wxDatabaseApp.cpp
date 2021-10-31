@@ -11,6 +11,8 @@
 #include <wx/base/wxprec.h>
 #include <wx/database/wxprec.h>
 
+#include <wx/stdpaths.h>
+
 
 class wxDatabaseApp : public wxAppConsole
 {
@@ -56,12 +58,12 @@ int wxDatabaseApp::OnRun()
 
 		// TDS direct
 		// The following lines were added to freetds.conf for server=manyleaves_sqlexpress
-//	[manyleaves_sqlexpress]
-//	host = manyleaves
-//	instance = sqlexpress
-//#	port = 1433
-// instance and port are mutually exclusive
-		pDatabase = GetDatabase("[TDS]\nfreetds=C:/wxDev/freetds-1.00.24/freetds.conf\nserver=manyleaves_sqlexpress\ndatabase=test\nuser=\npassword=\nversion=7.1");
+		//	[manyleaves_sqlexpress]
+		//	host = manyleaves
+		//	instance = sqlexpress
+		//#	port = 1433
+		// instance and port are mutually exclusive
+		//pDatabase = GetDatabase("[TDS]\nfreetds=C:/wxDev/freetds-1.00.24/freetds.conf\nserver=manyleaves_sqlexpress\ndatabase=test\nuser=\npassword=\nversion=7.1");
 	
 		// TDS via ODBC
 		//pDatabase = GetDatabase("[ODBC]\nConnection=DRIVER=SQL Server;SERVER=manyleaves\\\\sqlexpress;TRUSTED_CONNECTION=Yes;DATABASE=test\nDSN=\nDbType=TDS\n");
@@ -72,6 +74,12 @@ int wxDatabaseApp::OnRun()
 		// MS Access via ODBC
 		//pDatabase = GetDatabase("[ODBC]\nConnection=DRIVER={microsoft access driver (*.mdb)};dbq=C:/wxDev/msaccess/test.mdb;\nDSN=\nDbType=TDS\n");
 
+		wxFileName f(wxStandardPaths::Get().GetExecutablePath());
+		wxString appPath(f.GetPath());
+		
+		//If it does not work for Windows, Install drivers from http://www.ch-werner.de/sqliteodbc/
+		pDatabase = GetDatabase("[ODBC]\nConnection=DRIVER=SQLite3 ODBC Driver;Database="+appPath + wxFileName::GetPathSeparator() + "wxdatabase.db\nDbType=SQLITE\n");
+		
 		if (!pDatabase) throw(wxDatabaseException(-1, "Unable to establish connection to a database"));
 
 		//Create table 
