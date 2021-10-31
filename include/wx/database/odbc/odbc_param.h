@@ -29,7 +29,7 @@ public:
   };
    
   long GetDataLength();
-  long* GetDataLengthPointer();
+  long long* GetDataLengthPointer();
   
   void* GetDataPtr();
   SQLSMALLINT GetValueType();
@@ -53,7 +53,7 @@ private:
   bool m_bValue;
   wxMemoryBuffer m_BufferValue;
   wxCharBuffer m_CharBufferValue;
-  long m_nBufferLength;
+  long long m_nBufferLength;
   
 };
 

@@ -74,7 +74,7 @@ long wxOdbcParameter::GetDataLength()
   }
 }
 
-long* wxOdbcParameter::GetDataLengthPointer()
+long long* wxOdbcParameter::GetDataLengthPointer()
 {
   if (m_nParameterType == wxOdbcParameter::PARAM_NULL)
   {
