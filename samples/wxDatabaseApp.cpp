@@ -13,6 +13,17 @@
 
 #include <wx/stdpaths.h>
 
+#include <wx/database/sqlite3/sqlite_database.h>
+
+/**
+ * Sample application showing how to use basics of wxDatabase
+ * To test different databases, you will need to setup appropriate connection using one
+ * of the method provided at the end of the file. Be sure to enable that specific database
+ * support via ENABLE_*** CMake directives before build to add support for that database.
+ * Improvements are welcome as pull requests to https://github.com/mtangoo/wxDatabase
+ * 
+*/
+
 
 class wxDatabaseApp : public wxAppConsole
 {
@@ -20,7 +31,7 @@ class wxDatabaseApp : public wxAppConsole
         virtual bool OnInit();
         virtual int OnRun();
 	private:
-		wxDatabase* GetDatabase(const wxString& conf = "");
+		wxDatabase* GetSQLiteDatabase();
 };
 
 wxIMPLEMENT_APP(wxDatabaseApp);
@@ -35,75 +46,20 @@ int wxDatabaseApp::OnRun()
     wxDatabase *pDatabase = NULL;
     try
     {
-		// opening a database via wxDatabase::GetDatabase() hides all the details of the varied database arguments
-
-		// calling the sample GetDatabase() with a non-empty "config entry" string also avoids the need for the wxDatabaseApp.conf file
-
-		// simply comment in one of the GetDatabase() calls below
-
-		// use the wxDatabaseApp.conf file
-		//pDatabase = GetDatabase();
-		
-		// SQLite3 direct
-		//pDatabase = GetDatabase("[SQLite]\ndatabase=C:/wxDev/sqlite/test.sqlite");
-		
-		// SQLite3 via ODBC
-		//pDatabase = GetDatabase("[ODBC]\nConnection=DRIVER=SQLite3 ODBC Driver;Database=C:/wxDev/sqlite/test.sqlite\nDbType=SQLITE\n");
-		
-		// PostgreSQL
-		//pDatabase = GetDatabase("[PostgreSQL]\nlibrary_location=C:/Program Files/PostgreSQL/8.3/bin\nserver=127.0.0.1\ndatabase=test\nuser=postgres\npassword=jesus\nport=5432");
-		
-		// MySQL
-		//pDatabase = GetDatabase("[MySQL]\nlibrary_location=C:/Program Files/MySQL/MySQL Server 5.1/bin\nserver=127.0.0.1\ndatabase=test\nuser=root\npassword=jesus");
-
-		// TDS direct
-		// The following lines were added to freetds.conf for server=manyleaves_sqlexpress
-		//	[manyleaves_sqlexpress]
-		//	host = manyleaves
-		//	instance = sqlexpress
-		//#	port = 1433
-		// instance and port are mutually exclusive
-		//pDatabase = GetDatabase("[TDS]\nfreetds=C:/wxDev/freetds-1.00.24/freetds.conf\nserver=manyleaves_sqlexpress\ndatabase=test\nuser=\npassword=\nversion=7.1");
-	
-		// TDS via ODBC
-		//pDatabase = GetDatabase("[ODBC]\nConnection=DRIVER=SQL Server;SERVER=manyleaves\\\\sqlexpress;TRUSTED_CONNECTION=Yes;DATABASE=test\nDSN=\nDbType=TDS\n");
-	
-		// TDS via ODBC using MARS
-		//pDatabase = GetDatabase("[ODBC]\nConnection=DRIVER={SQL Server Native Client 10.0};MARS_CONNECTION=Yes;SERVER=manyleaves\\\\sqlexpress;TRUSTED_CONNECTION=Yes;DATABASE=test\nDSN=\nDbType=TDS\n");
-
-		// MS Access via ODBC
-		//pDatabase = GetDatabase("[ODBC]\nConnection=DRIVER={microsoft access driver (*.mdb)};dbq=C:/wxDev/msaccess/test.mdb;\nDSN=\nDbType=TDS\n");
-
-		wxFileName f(wxStandardPaths::Get().GetExecutablePath());
-		wxString appPath(f.GetPath());
-		
-		//If it does not work for Windows, Install drivers from http://www.ch-werner.de/sqliteodbc/
-		pDatabase = GetDatabase("[ODBC]\nConnection=DRIVER=SQLite3 ODBC Driver;Database="+appPath + wxFileName::GetPathSeparator() + "wxdatabase.db\nDbType=SQLITE\n");
-		
-		if (!pDatabase) throw(wxDatabaseException(-1, "Unable to establish connection to a database"));
-
+		wxDatabase *pDatabase = GetSQLiteDatabase(); //Use method appropriate to the database you want to test
 		//Create table 
-        wxString deleteSqlTB = "DROP TABLE Names;";
-		try
-		{
-			pDatabase->RunQuery(deleteSqlTB);
-		}
-		catch(wxDatabaseException&)
-		{
-		}
-
 		wxString createSqlTB = "CREATE TABLE Names (ID INT PRIMARY KEY NOT NULL, Name VARCHAR(50) NOT NULL);";
-		pDatabase->RunQuery(createSqlTB);
+	    pDatabase->RunQuery(createSqlTB);
         
         //insert into table
         wxString sqlStefano = "INSERT INTO Names VALUES(1, 'Stefano Mtangoo');";
         wxString sqlAndrew = "INSERT INTO Names VALUES(2, 'Andrew aka Many Leaves');";
         wxString sqlUpendo = "INSERT INTO Names VALUES(3, 'Upendo Stefano');";
-        
+
         pDatabase->RunQuery(sqlStefano);
         pDatabase->RunQuery(sqlAndrew);
         pDatabase->RunQuery(sqlUpendo);
-        
+
         //Prepared statement
         wxPreparedStatement* pStatement = pDatabase->PrepareStatement("INSERT INTO Names (ID, Name) VALUES(?, ?);");
         if (pStatement)
@@ -113,7 +69,7 @@ int wxDatabaseApp::OnRun()
             pStatement->RunQuery();
             pDatabase->CloseStatement(pStatement);
         }
-        
+		
         //Select from table
         wxDatabaseResultSet *pResults = pDatabase->RunQueryWithResults("SELECT * FROM Names;");
         if (pResults)
@@ -127,7 +83,11 @@ int wxDatabaseApp::OnRun()
             }
             pDatabase->CloseResultSet(pResults);
         }
-		pDatabase->Close();        
+    
+		//When done with the datbase connection, close it
+		pDatabase->Close();   
+		//Delete Pointer, or use smart pointer for db connection
+        if (pDatabase) delete pDatabase;     
     }
     catch (wxDatabaseException& e)
     {
@@ -138,50 +98,22 @@ int wxDatabaseApp::OnRun()
 
       return e.GetErrorCode();
     }
-    if (pDatabase)
-        delete pDatabase;
     
    return 0;
 }
 
-wxDatabase* wxDatabaseApp::GetDatabase(const wxString& configString)
+/**
+ * Methods below shows how to connect different databases using wxDatabase.
+ * Just replace GetSQLiteDatabase() in OnRun() with any of these to test specific database
+ * Remember to enable that specific database in CMake before building to make it available
+*/
+wxDatabase* wxDatabaseApp::GetSQLiteDatabase()
 {
-	wxDatabase* pDatabase = NULL;
-	wxInputStream* configStream = NULL;
-
-	if (configString.IsEmpty())
-	{
-		wxString configPath("wxDatabaseApp.conf");
-		if (!wxFileName::FileExists(configPath))
-		{
-			wxPrintf("Configuration file \"%s\" not found", configPath);
-			return NULL;
-		}
- 		configStream = new wxFileInputStream(configPath);
-		if (!configStream->IsOk())
-		{
-			wxPrintf("Configuration file \"%s\" cannot be opened", configPath);
-			return NULL;
-		}
-	}
-	else
-	{
- 		configStream = new wxStringInputStream(configString);
-	}
-	wxFileConfig config(*configStream);
-
-	wxString err = wxEmptyString;
-	// returns the first non-empty entry in the config stream
-	pDatabase = wxDatabase::GetDatabase(config, &err);
-	if (pDatabase == NULL)
-	{
-		wxPrintf("Cannot establish database connection from %s", err); 
-		return NULL;
-	}
-
-	wxPrintf("Running %s", pDatabase->GetTypeName()); 
-	if (pDatabase->IsViaODBC()) wxPrintf("[ODBC]"); 
-	wxPrintf("\n\n");
-
-	return pDatabase;
+    wxFileName f(wxStandardPaths::Get().GetExecutablePath());
+    wxString dbPath = f.GetPath() + "wxDatabase.db";
+    wxRemoveFile(dbPath);
+	
+    wxDatabase* pDatabase =  new wxSqliteDatabase(dbPath, false);
+    
+    return pDatabase;
 }
